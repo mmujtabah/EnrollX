@@ -1,0 +1,20 @@
+/* src/pages/About.css */
+
+.about {
+    text-align: center;
+    padding: 20px;
+    color: white;
+    background: #0f172a; /* Dark Navy Background */
+  }
+  
+  .about h1 {
+    font-size: 3rem;
+    color: #FFD700;
+  }
+  
+  .about p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    opacity: 0.8;
+  }
+  
