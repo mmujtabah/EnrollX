@@ -1,5 +1,3 @@
-Here's the entire README content in a single code frame:
-
 ```markdown
 # EnrollX
 
