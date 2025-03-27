@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Login.css"; // Import the CSS file
+import Layout from "../components/Layout.jsx";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -16,7 +17,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/login`,
+        `${import.meta.env.VITE_API_URL}/api/students/login`,
         formData
       );
       alert(res.data.message);
@@ -27,6 +28,7 @@ const Login = () => {
   };
 
   return (
+    <Layout>
     <div className="login-container">
       <div className="login-box">
         <h2>Student Login</h2>
@@ -56,6 +58,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

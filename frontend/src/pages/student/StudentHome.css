@@ -26,6 +26,7 @@ body {
     height: 70vh; /* Ensure it fills most of the screen */
     backdrop-filter: blur(8px); /* Blurred background for the container */
     position: relative; /* Required for z-index to work */
+    margin-top: 80px;
   }
   
   /* Heading styles */

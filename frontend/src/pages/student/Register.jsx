@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Register.css"; // Import the CSS file
+import Layout from "../components/Layout.jsx";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        `${import.meta.env.VITE_API_URL}/api/students/register`,
         formData,
         { withCredentials: true }
       );
@@ -30,6 +31,7 @@ const Register = () => {
   };
 
   return (
+    <Layout>
     <div className="register-container">
       <div className="register-box">
         <h2>Register</h2>
@@ -74,6 +76,7 @@ const Register = () => {
         </form>
       </div>
     </div>
+    </Layout>
   );
 };
 

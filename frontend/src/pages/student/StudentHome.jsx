@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import './StudentHome.css'; // Import the CSS file for styling
+import Layout from "../components/Layout.jsx";
 
 const StudentHome = () => {
   return (
+    <Layout>
     <div className="student-home">
       <h1>Welcome to the Student Portal</h1>
       <p>
@@ -20,6 +22,7 @@ const StudentHome = () => {
         </Link>
       </div>
     </div>
+    </Layout>
   );
 };
 
