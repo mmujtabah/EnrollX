@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Layout from "../components/Layout"; // Import Layout component (which includes Navbar)
 import "./ForgotPassword.css"; 
 
 const ForgotPassword = () => {
@@ -30,37 +31,39 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-box">
-        <h2>Forgot Password</h2>
-        <form className="forgot-password-form" onSubmit={handleReset}>
-          <div className="input-group">
-            <input
-              type="text"
-              name="rollNo"
-              placeholder="Enter your Roll No"
-              onChange={handleChange}
-              required
-            />
+    <Layout> {/* Wrap your content with Layout to include Navbar */}
+      <div className="forgot-password-container">
+        <div className="forgot-password-box">
+          <h2>Forgot Password</h2>
+          <form className="forgot-password-form" onSubmit={handleReset}>
+            <div className="input-group">
+              <input
+                type="text"
+                name="rollNo"
+                placeholder="Enter your Roll No"
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your Email"
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" className="forgot-password-btn" disabled={loading}>
+              {loading ? "Processing..." : "Reset Password"}
+            </button>
+          </form>
+          <div className="back-to-login">
+            <a href="/student-login">Back to Login</a>
           </div>
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your Email"
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="forgot-password-btn" disabled={loading}>
-            {loading ? "Processing..." : "Reset Password"}
-          </button>
-        </form>
-        <div className="back-to-login">
-          <a href="/student-login">Back to Login</a>
         </div>
       </div>
-    </div>
+    </Layout> 
   );
 };
 

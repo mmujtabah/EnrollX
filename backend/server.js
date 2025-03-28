@@ -7,7 +7,12 @@ const studentRoutes = require("./routes/studentRoutes");
 const app = express();
 
 // ✅ Middleware
-app.use(cors());
+app.use(
+    cors({
+      origin: "http://localhost:5173", // ✅ Set frontend URL, not '*'
+      credentials: true, // ✅ Allow credentials (cookies, headers)
+    })
+  );
 app.use(express.json());
 
 // ✅ Routes
