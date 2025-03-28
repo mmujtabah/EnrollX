@@ -2,35 +2,20 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const studentRoutes = require("./routes/studentRoutes");
+
 const app = express();
 
-// CORS Configuration
-app.use(cors({ 
-  origin: "http://localhost:5173", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true 
-}));
+// ✅ Middleware
+app.use(cors());
+app.use(express.json());
 
-app.use(express.json()); // Parse JSON request bodies
+// ✅ Routes
+app.use("/api/students", studentRoutes);
 
-// Debugging: Log all incoming requests
-app.use((req, res, next) => {
-    console.log(`Incoming Request: ${req.method} ${req.url}`);
-    next();
-});
+// ✅ Test Route
+app.get("/", (req, res) => res.send("🚀 Server is running!"));
 
-app.get("/", (req, res) => {
-  res.send("Server is running!");
-});
-
-// ✅ Use the simplified studentRoutes.js
-app.use("/api/students", require("./api/studentRoutes"));
-
-// Handle unknown routes
-app.use("*", (req, res) => {
-    res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });
-});
-
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
