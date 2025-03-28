@@ -37,6 +37,6 @@ exports.getEnrolledCourses = async (rollNo) => {
         .query(`SELECT E.section_id, E.course_code, C.course_name, C.course_dep, C.credit_hr, C.course_type
                 FROM Enrollment E
                 JOIN Courses C ON E.course_code = C.course_code
-                WHERE E.rollNo = @rollNo`);
+                WHERE E.roll_no = @rollNo`);
     return result.recordset;
 };
