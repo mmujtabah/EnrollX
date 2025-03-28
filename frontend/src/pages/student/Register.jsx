@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Register.css"; // Import the CSS file
+import "./Register.css"; 
 import Layout from "../components/Layout.jsx";
 
 const Register = () => {
