@@ -22,8 +22,7 @@ const Register = () => {
 
     // Clean and format the Roll Number
     let formattedRollNo = formData.rollNo.trim().replace(/\s+/g, "").normalize("NFKC");
-    formattedRollNo = formattedRollNo.replace(/l/, "L"); // Convert lowercase "l" to uppercase "L"
-
+    formattedRollNo = formattedRollNo.replace(/l/g, "L"); // Convert lowercase "l" to uppercase "L"
     // Set the cleaned roll number back to the formData
     setFormData({ ...formData, rollNo: formattedRollNo });
 
