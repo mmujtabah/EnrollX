@@ -78,7 +78,7 @@ async function dropCourse(rollNo, courseCode) {
         // Check if student exists
         const student = await pool
             .request()
-            .input("rollNo", sql.VarChar, rollNo)
+            .input("rollNo", sql.Char(8), rollNo)
             .query("SELECT * FROM Students WHERE roll_no = @rollNo");
 
         if (student.recordset.length === 0) {

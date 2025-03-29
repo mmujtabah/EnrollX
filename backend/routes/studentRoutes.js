@@ -8,7 +8,7 @@ router.post("/login", studentController.loginStudent);
 router.post("/forgot-password", studentController.forgotPassword);
 
 // ✅ Get Student's Enrolled Courses
-router.get("/:rollNo/courses-details", studentController.getStudentCourses);
+router.get("/:rollNo/courses", studentController.getStudentCourses);
 
 // ✅ Get Courses Offered for Next Semester
 router.get("/:rollNo/courses-offered", studentController.getCoursesOffered);
