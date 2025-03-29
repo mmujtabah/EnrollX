@@ -133,7 +133,7 @@ const adminModel = {
     updateStudentName: async (rollNo, name) => {
         const pool = await poolPromise;
         return pool.request()
-            .input("rollNo", sql.Char(9), rollNo)
+            .input("rollNo", sql.Char(8), rollNo)
             .input("name", sql.NVarChar(255), name)
             .query(`UPDATE Students SET name = @name WHERE roll_no = @rollNo`);
     }
