@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { createStudent, getStudentByRollNo, getEnrolledCourses, updatePassword } = require("../models/studentModel");
-const sendResetEmail = require("../utils/emailService"); // ✅ Corrected Import
+const { createStudent, getStudentByRollNo, getEnrolledCourses, updatePassword, getCoursesOffered, getRegistrationPeriod, dropCourse} = require("../models/studentModel");
+const sendResetEmail = require("../utils/emailService");
 
 // ✅ Register Student
 exports.registerStudent = async (req, res) => {
@@ -50,20 +50,14 @@ exports.loginStudent = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
     const { rollNo } = req.body;
     try {
-        console.log("Received request for forgot password:", rollNo);
         const student = await getStudentByRollNo(rollNo);
         if (!student) return res.status(404).json({ message: "❌ Student not found" });
 
-        const tempPassword = Math.random().toString(36).slice(-8);
-        console.log("Generated temporary password:", tempPassword);
-        
+        const tempPassword = Math.random().toString(36).slice(-8);    
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
         await updatePassword(rollNo, hashedPassword);
 
-        console.log("Updated password in database.");
-
         await sendResetEmail(student.email, tempPassword); // ✅ Now correctly imported
-        console.log("Sent reset email to:", student.email);
 
         res.json({ message: "✅ Temporary password sent to your email" });
     } catch (error) {
@@ -79,5 +73,41 @@ exports.getStudentCourses = async (req, res) => {
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: "❌ Error fetching enrolled courses", error });
+    }
+};
+
+// ✅ Get Courses Offered for the Next Semester
+exports.getCoursesOffered = async (req, res) => {
+    const { rollNo } = req.params;
+
+    try {
+        // Fetch the registration period details
+        const registrationPeriod = await getRegistrationPeriod();
+
+        if (!registrationPeriod || !registrationPeriod.is_active) {
+            return res.status(400).json({ message: "❌ Registration period is not active. Please try again later." });
+        }
+
+        // Fetch the courses offered based on the student's next semester
+        const courses = await getCoursesOffered(rollNo);
+
+        if (courses.length === 0) {
+            return res.status(404).json({ message: "❌ No courses are offered for the next semester." });
+        }
+
+        // Return the list of courses for the next semester
+        res.json(courses);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error fetching offered courses", error: error.message });
+    }
+};
+
+// ✅ Drop a Registered Course
+exports.dropCourse = async (req, res) => {
+    try {
+        const { rollNo, courseCode } = req.params;
+        res.json(await dropCourse(rollNo, courseCode)); // ✅ Uses the message returned from model function
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error dropping course", error });
     }
 };
