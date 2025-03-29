@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-async function sendResetEmail(to, tempPassword) {
+async function sendResetEmail(to, name, tempPassword) {
     const transporter = nodemailer.createTransport({
         service: "Gmail",
         auth: {
@@ -13,7 +13,7 @@ async function sendResetEmail(to, tempPassword) {
         from: process.env.EMAIL_USER,
         to,
         subject: "EnrollX Password Reset Request",
-        text: `Dear User,
+        text: `Dear ${name},
     
     We received a request to reset your password for EnrollX. Here is your temporary password:
     
@@ -31,4 +31,4 @@ async function sendResetEmail(to, tempPassword) {
     await transporter.sendMail(mailOptions);
 }
 
-module.exports = sendResetEmail; // ✅ Correct Export
+module.exports = sendResetEmail;
