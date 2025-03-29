@@ -101,7 +101,7 @@ const adminModel = {
         return pool.request()
             .input("enrollId", sql.Int, enrollId)
             .input("rollNo", sql.Char(9), rollNo)
-            .input("sectionId", sql.Int, sectionId)
+            .input("sectionId", sql.Char(9), sectionId)
             .input("courseCode", sql.VarChar(20), courseCode)
             .input("semester", sql.VarChar(10), semester)
             .query(`
@@ -114,7 +114,7 @@ const adminModel = {
         const pool = await poolPromise;
         return pool.request()
             .input("rollNo", sql.Char(9), rollNo)
-            .input("semester", sql.VarChar(10), semester)
+            .input("semester", sql.Int, semester)
             .query(`
                 UPDATE Enrollments 
                 SET semester = @semester 
