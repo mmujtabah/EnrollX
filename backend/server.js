@@ -3,6 +3,8 @@ const cors = require("cors");
 require("dotenv").config();
 
 const studentRoutes = require("./routes/studentRoutes");
+const instructorRoutes = require("./routes/instructorRoutes")
+const adminRoutes = require("./routes/adminRoutes")
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 
 // ✅ Routes
 app.use("/api/students", studentRoutes);
+app.use("/api/instructors", instructorRoutes)
+app.use("/api/admins", adminRoutes)
 
 // ✅ Test Route
 app.get("/", (req, res) => res.send("🚀 Server is running!"));
