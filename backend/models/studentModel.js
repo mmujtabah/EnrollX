@@ -71,52 +71,50 @@ exports.getRegistrationPeriod = async () => {
 };
 
 // Drop Enrolled Course
-async function dropCourse(rollNo, courseCode) {
-    try {
-        const pool = await poolPromise;
+exports.dropCourse = async function (rollNo, courseCode) {
+  try {
+      const pool = await poolPromise;
 
-        // Check if student exists
-        const student = await pool
-            .request()
-            .input("rollNo", sql.Char(8), rollNo)
-            .query("SELECT * FROM Students WHERE roll_no = @rollNo");
+      // Check if student exists
+      const student = await pool
+          .request()
+          .input("rollNo", sql.Char(8), rollNo)
+          .query("SELECT * FROM Students WHERE roll_no = @rollNo");
 
-        if (student.recordset.length === 0) {
-            return { message: "❌ Student not found" };
-        }
+      if (student.recordset.length === 0) {
+          return { message: "❌ Student not found" };
+      }
 
-        // Check if course exists
-        const course = await pool
-            .request()
-            .input("courseCode", sql.VarChar, courseCode)
-            .query("SELECT * FROM Courses WHERE course_code = @courseCode");
+      // Check if course exists
+      const course = await pool
+          .request()
+          .input("courseCode", sql.VarChar(9), courseCode)
+          .query("SELECT * FROM Courses WHERE course_code = @courseCode");
 
-        if (course.recordset.length === 0) {
-            return { message: "❌ Course not found" };
-        }
+      if (course.recordset.length === 0) {
+          return { message: "❌ Course not found" };
+      }
 
-        // Check if student is enrolled
-        const enrollment = await pool
-            .request()
-            .input("rollNo", sql.VarChar, rollNo)
-            .input("courseCode", sql.VarChar, courseCode)
-            .query("SELECT * FROM Enrollment WHERE roll_no = @rollNo AND course_code = @courseCode");
+      // Check if student is enrolled
+      const enrollment = await pool
+          .request()
+          .input("rollNo", sql.Char(8), rollNo)
+          .input("courseCode", sql.VarChar(9), courseCode)
+          .query("SELECT * FROM Enrollment WHERE roll_no = @rollNo AND course_code = @courseCode");
 
-        if (enrollment.recordset.length === 0) {
-            return { message: "❌ Student is not enrolled in this course" };
-        }
+      if (enrollment.recordset.length === 0) {
+          return { message: "❌ Student is not enrolled in this course" };
+      }
 
-        // Delete enrollment
-        await pool
-            .request()
-            .input("rollNo", sql.VarChar, rollNo)
-            .input("courseCode", sql.VarChar, courseCode)
-            .query("DELETE FROM Enrollment WHERE roll_no = @rollNo AND course_code = @courseCode");
+      // Delete enrollment
+      await pool
+          .request()
+          .input("rollNo", sql.Char(8), rollNo)
+          .input("courseCode", sql.VarChar(9), courseCode)
+          .query("DELETE FROM Enrollment WHERE roll_no = @rollNo AND course_code = @courseCode");
 
-        return { message: "✅ Course dropped successfully" };
-    } catch (error) {
-        return { message: "❌ Internal Server Error", error };
-    }
-}
-
-module.exports = { dropCourse };
+      return { message: "✅ Course dropped successfully" };
+  } catch (error) {
+      return { message: "❌ Internal Server Error", error };
+  }
+};
