@@ -115,6 +115,8 @@ exports.dropCourse = async function (rollNo, courseCode) {
 
       return { message: "✅ Course dropped successfully" };
   } catch (error) {
-      return { message: "❌ Internal Server Error", error };
+    console.error("❌ Error dropping course:", error);
+    return { message: "❌ Internal Server Error" };
+    
   }
 };

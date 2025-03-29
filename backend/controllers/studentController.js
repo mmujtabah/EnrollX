@@ -108,6 +108,7 @@ exports.dropCourse = async (req, res) => {
         const { rollNo, courseCode } = req.params;
         res.json(await dropCourse(rollNo, courseCode)); // ✅ Uses the message returned from model function
     } catch (error) {
-        res.status(500).json({ message: "❌ Error dropping course", error });
+        console.error("❌ Error dropping course:", error);
+        res.status(500).json({ message: "❌ Error dropping course" });
     }
 };
