@@ -133,7 +133,7 @@ const deleteEnrollment = async (req, res) => {
 };
 
 const updateStudentName = async (req, res) => {
-    const { id } = req.params;
+    const { rollNo  } = req.params;
     const { name } = req.body;
 
     if (!name) {
@@ -141,7 +141,7 @@ const updateStudentName = async (req, res) => {
     }
 
     try {
-        await adminModel.updateStudentName(id, name);
+        await adminModel.updateStudentName(rollNo , name);
         res.status(200).json({ message: "Student name updated successfully!" });
     } catch (error) {
         res.status(500).json({ error: error.message });

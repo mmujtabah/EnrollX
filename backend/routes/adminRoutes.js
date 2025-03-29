@@ -5,7 +5,7 @@ const adminController = require("../controllers/adminController");
 // ✅ Student Routes
 router.get("/students", adminController.getAllStudents);
 // ✅ Update Student Name Route
-router.patch("/students/:id", adminController.updateStudentName);
+router.patch("/students/:rollNo", adminController.updateStudentName);
 
 
 // ✅ Instructor Routes

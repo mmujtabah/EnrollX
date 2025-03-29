@@ -113,7 +113,7 @@ const adminModel = {
     updateEnrollmentSemester: async (rollNo, semester) => {
         const pool = await poolPromise;
         return pool.request()
-            .input("rollNo", sql.Char(9), rollNo)
+            .input("rollNo", sql.Char(8), rollNo)
             .input("semester", sql.Int, semester)
             .query(`
                 UPDATE Enrollments 
