@@ -12,7 +12,7 @@ const getRegisteredStudents = async (instructorId, courseCode) => {
       .query(
         `SELECT cs.instructor_id, s.roll_no, s.name, cs.course_code, cs.section_id
          FROM Course_Sections cs 
-         JOIN Enrollment e ON cs.section_id = e.section_id
+         JOIN Enrollments e ON cs.section_id = e.section_id
          JOIN Students s ON e.roll_no = s.roll_no
          WHERE cs.instructor_id = @instructorId 
          AND cs.course_code = @courseCode`
