@@ -100,10 +100,10 @@ const adminModel = {
         const pool = await poolPromise;
         return pool.request()
             .input("enrollId", sql.Int, enrollId)
-            .input("rollNo", sql.Char(9), rollNo)
+            .input("rollNo", sql.Char(8), rollNo)
             .input("sectionId", sql.Char(9), sectionId)
             .input("courseCode", sql.VarChar(20), courseCode)
-            .input("semester", sql.VarChar(10), semester)
+            .input("semester", sql.Int, semester)
             .query(`
                 INSERT INTO Enrollments (enroll_id, roll_no, section_id, course_code, semester) 
                 VALUES (@enrollId, @rollNo, @sectionId, @courseCode, @semester)
