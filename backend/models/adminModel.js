@@ -57,7 +57,7 @@ const adminModel = {
     },
 
     // ✅ Add a course
-    addCourse: async (courseCode, courseName, courseDep, creditHr, courseType) => {
+    addCourse: async (courseCode, courseName, courseDep, creditHr, courseType, courseSemester) => {
         const pool = await poolPromise;
         return pool.request()
             .input("courseCode", sql.VarChar(20), courseCode)
@@ -65,22 +65,24 @@ const adminModel = {
             .input("courseDep", sql.NVarChar(100), courseDep)
             .input("creditHr", sql.Int, creditHr)
             .input("courseType", sql.NVarChar(50), courseType)
+            .input("courseSemester", sql.Int, courseSemester)
             .query(`
-                INSERT INTO Courses (course_code, course_name, course_dep, credit_hr, course_type) 
-                VALUES (@courseCode, @courseName, @courseDep, @creditHr, @courseType)
+                INSERT INTO Courses (course_code, course_name, course_dep, credit_hr, course_type, course_semester) 
+                VALUES (@courseCode, @courseName, @courseDep, @creditHr, @courseType, @courseSemester)
             `);
     },
 
     // ✅ Update a course
-    updateCourse: async (courseCode, courseName, courseDep) => {
+    updateCourse: async (courseCode, courseName, courseDep, courseSemester) => {
         const pool = await poolPromise;
         return pool.request()
             .input("courseCode", sql.VarChar(20), courseCode)
             .input("courseName", sql.NVarChar(255), courseName)
             .input("courseDep", sql.NVarChar(100), courseDep)
+            .inpput("courseSemester", sql.Int, courseSemester)
             .query(`
                 UPDATE Courses 
-                SET course_name = @courseName, course_dep = @courseDep 
+                SET course_name = @courseName, course_dep = @courseDep, course_semester = @courseSemester
                 WHERE course_code = @courseCode
             `);
     },
@@ -107,14 +109,15 @@ const adminModel = {
             `);
     },
 
-    updateEnrollmentSemester: async (rollNo, semester) => {
+    updateEnrollmentSemester: async (rollNo, semester, sectionId) => {
         const pool = await poolPromise;
         return pool.request()
             .input("rollNo", sql.Char(8), rollNo)
             .input("semester", sql.Int, semester)
+            .input("sectionId", sql.Char(9), sectionId)
             .query(`
                 UPDATE Enrollments 
-                SET semester = @semester 
+                SET semester = @semester, section_id = @sectionId
                 WHERE roll_no = @rollNo
             `);
     },
