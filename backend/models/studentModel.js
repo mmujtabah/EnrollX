@@ -170,7 +170,7 @@ const studentModel = {
       const courseTypeResult = await pool
         .request()
         .input("courseCode", sql.VarChar(9), courseCode)
-        .query("SELECT type FROM Courses WHERE course_code = @courseCode");
+        .query("SELECT course_type FROM Courses WHERE course_code = @courseCode");
 
       const courseType = courseTypeResult.recordset[0]?.type; // 'core' or 'elective'
 
@@ -182,7 +182,7 @@ const studentModel = {
           `SELECT TOP 1 section_id 
          FROM Enrollments E
          JOIN Courses C ON E.course_code = C.course_code
-         WHERE E.roll_no = @rollNo AND C.type = 'core'`
+         WHERE E.roll_no = @rollNo AND C.course_type = 'core'`
         );
 
       const existingCoreSection = coreSectionResult.recordset[0]?.section_id;
