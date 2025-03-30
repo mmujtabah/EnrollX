@@ -1,6 +1,5 @@
 const { sql, poolPromise } = require("../config/db");
 
-// ✅ Get Registered Students for an Instructor's Course
 const getRegisteredStudents = async (instructorId, courseCode) => {
   try {
     const pool = await poolPromise;
@@ -27,7 +26,6 @@ const getRegisteredStudents = async (instructorId, courseCode) => {
   }
 };
 
-// ✅ Get Teaching Assistants for an Instructor's Course
 const getTeachingAssistants = async (instructorId, courseCode) => {
   try {
     const pool = await poolPromise;
@@ -57,7 +55,6 @@ const getTeachingAssistants = async (instructorId, courseCode) => {
   }
 };
 
-// ✅ Get Courses Taught by an Instructor (Across Multiple Sections)
 const getInstructorCourses = async (instructorId) => {
   try {
     const pool = await poolPromise;

@@ -1,19 +1,16 @@
 const { sql, poolPromise } = require("../config/db");
 
 const adminModel = {
-    // ✅ Get all students
     getAllStudents: async () => {
         const pool = await poolPromise;
         return pool.request().query(`SELECT * FROM Students`);
     },
 
-    // ✅ Get all instructors
     getAllInstructors: async () => {
         const pool = await poolPromise;
         return pool.request().query(`SELECT * FROM Instructors`);
     },
 
-    // ✅ Add a new instructor
     addInstructor: async (id, email, password, name) => {
         const pool = await poolPromise;
         return pool.request()
@@ -27,7 +24,6 @@ const adminModel = {
             `);
     },
 
-    // ✅ Update an instructor's details
     updateInstructor: async (id, email, password, name) => {
         const pool = await poolPromise;
         return pool.request()
@@ -42,7 +38,6 @@ const adminModel = {
             `);
     },
 
-    // ✅ Delete an instructor
     deleteInstructor: async (id) => {
         const pool = await poolPromise;
         return pool.request()
@@ -50,13 +45,11 @@ const adminModel = {
             .query(`DELETE FROM Instructors WHERE id = @id`);
     },
 
-    // ✅ Get all courses
     getAllCourses: async () => {
         const pool = await poolPromise;
         return pool.request().query(`SELECT * FROM Courses`);
     },
 
-    // ✅ Add a course
     addCourse: async (courseCode, courseName, courseDep, creditHr, courseType, courseSemester) => {
         const pool = await poolPromise;
         return pool.request()
@@ -72,7 +65,6 @@ const adminModel = {
             `);
     },
 
-    // ✅ Update a course
     updateCourse: async (courseCode, courseName, courseDep, courseSemester) => {
         const pool = await poolPromise;
         return pool.request()
@@ -87,7 +79,6 @@ const adminModel = {
             `);
     },
 
-    // ✅ Delete a course
     deleteCourse: async (courseCode) => {
         const pool = await poolPromise;
         return pool.request()
@@ -95,7 +86,6 @@ const adminModel = {
             .query(`DELETE FROM Courses WHERE course_code = @courseCode`);
     },
 
-    // ✅ Manage Enrollments
     addEnrollment: async (rollNo, sectionId, courseCode, semester) => {
         const pool = await poolPromise;
         return pool.request()
@@ -129,7 +119,6 @@ const adminModel = {
             .query(`DELETE FROM Enrollments WHERE enroll_id = @enrollId`);
     },
 
-    // ✅ Update student name
     updateStudentName: async (rollNo, name) => {
         const pool = await poolPromise;
         return pool.request()

@@ -1,7 +1,6 @@
 const { sql, poolPromise } = require("../config/db");
 
 const studentModel = {
-  // ✅ Register Student
   createStudent: async (name, rollNo, email, hashedPassword) => {
     const pool = await poolPromise;
     await pool
@@ -15,7 +14,6 @@ const studentModel = {
       );
   },
 
-  // ✅ Fetch Student by RollNo
   getStudentByRollNo: async (rollNo) => {
     const pool = await poolPromise;
     const result = await pool
@@ -25,7 +23,6 @@ const studentModel = {
     return result.recordset[0];
   },
 
-  // ✅ Update Password
   updatePassword: async (rollNo, newPassword) => {
     const pool = await poolPromise;
     await pool
@@ -37,7 +34,6 @@ const studentModel = {
       );
   },
 
-  // ✅ Fetch Enrolled Courses
   getEnrolledCourses: async (rollNo) => {
     const pool = await poolPromise;
     const result = await pool.request().input("rollNo", sql.Char(8), rollNo)
@@ -48,7 +44,6 @@ const studentModel = {
     return result.recordset;
   },
 
-  // Fetch Courses Offered
   getCoursesOffered: async (rollNo) => {
     const pool = await poolPromise;
     const result = await pool.request().input("rollNo", sql.Char(8), rollNo)
@@ -65,7 +60,6 @@ const studentModel = {
     return result.recordset;
   },
 
-  // Helper function to get the registration period
   getRegistrationPeriod: async () => {
     const pool = await poolPromise;
     const result = await pool
@@ -76,12 +70,10 @@ const studentModel = {
     return result.recordset[0];
   },
 
-  // Drop Enrolled Course
   dropCourse: async function (rollNo, courseCode) {
     try {
       const pool = await poolPromise;
 
-      // Check if student exists
       const student = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -91,7 +83,6 @@ const studentModel = {
         return { message: "❌ Student not found" };
       }
 
-      // Check if course exists
       const course = await pool
         .request()
         .input("courseCode", sql.VarChar(9), courseCode)
@@ -101,7 +92,6 @@ const studentModel = {
         return { message: "❌ Course not found" };
       }
 
-      // Check if student is enrolled
       const enrollment = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -114,7 +104,6 @@ const studentModel = {
         return { message: "❌ Student is not enrolled in this course" };
       }
 
-      // Delete enrollment
       await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -130,12 +119,10 @@ const studentModel = {
     }
   },
 
-  // ✅ Enroll in a Course
   enrollCourse: async (rollNo, courseCode, sectionId) => {
     try {
       const pool = await poolPromise;
 
-      // 🔹 Check if the registration period is active
       const regPeriodResult = await pool.request().query(
         `SELECT * FROM Registration_Period 
          WHERE GETDATE() BETWEEN start_datetime AND end_datetime 
@@ -146,7 +133,6 @@ const studentModel = {
         return { message: "❌ Registration period is closed." };
       }
 
-      // Check if student exists
       const student = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -156,7 +142,6 @@ const studentModel = {
         return { message: "❌ Student not found" };
       }
 
-      // Check if course exists
       const course = await pool
         .request()
         .input("courseCode", sql.VarChar(9), courseCode)
@@ -166,15 +151,13 @@ const studentModel = {
         return { message: "❌ Course not found" };
       }
 
-      // Get course type (core/elective)
       const courseTypeResult = await pool
         .request()
         .input("courseCode", sql.VarChar(9), courseCode)
         .query("SELECT course_type FROM Courses WHERE course_code = @courseCode");
 
-      const courseType = courseTypeResult.recordset[0]?.type; // 'core' or 'elective'
+      const courseType = courseTypeResult.recordset[0]?.type;
 
-      // 🔹 Check if student has already enrolled in a core course and get the section
       const coreSectionResult = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -187,7 +170,6 @@ const studentModel = {
 
       const existingCoreSection = coreSectionResult.recordset[0]?.section_id;
 
-      // 🔹 If enrolling in a core course, enforce section consistency
       if (
         courseType === "core" &&
         existingCoreSection &&
@@ -198,7 +180,6 @@ const studentModel = {
         };
       }
 
-      // Fetch current total enrolled credit hours
       const enrolledCreditsResult = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -212,7 +193,6 @@ const studentModel = {
       const currentCredits =
         enrolledCreditsResult.recordset[0].totalCredits || 0;
 
-      // Get credit hours of the new course
       const courseCreditsResult = await pool
         .request()
         .input("courseCode", sql.VarChar(9), courseCode)
@@ -220,12 +200,10 @@ const studentModel = {
 
       const newCourseCredits = courseCreditsResult.recordset[0].credit_hr;
 
-      // Check if adding this course exceeds 18 credit hours
       if (currentCredits + newCourseCredits > 18) {
         return { message: "❌ Credit hour limit exceeded (18 max)" };
       }
 
-      // Check if student is already enrolled in the course
       const enrollmentCheck = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -238,7 +216,6 @@ const studentModel = {
         return { message: "❌ Student is already enrolled in this course" };
       }
 
-      // 🔹 Fetch current semester for the student
       const semesterResult = await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
@@ -246,15 +223,14 @@ const studentModel = {
           "SELECT MAX(semester) + 1 AS nextSemester FROM Enrollments WHERE roll_no = @rollNo"
         );
 
-      let semester = semesterResult.recordset[0]?.nextSemester || 1; // Default to 1 if no previous semester found
+      let semester = semesterResult.recordset[0]?.nextSemester || 1;
 
-      // ✅ Enroll the student in the course with semester
       await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)
         .input("courseCode", sql.VarChar(9), courseCode)
         .input("sectionId", sql.Char(9), sectionId)
-        .input("semester", sql.Int, semester) // 🔹 Include semester
+        .input("semester", sql.Int, semester)
         .query(
           "INSERT INTO Enrollments (roll_no, course_code, section_id, semester) VALUES (@rollNo, @courseCode, @sectionId, @semester)"
         );
