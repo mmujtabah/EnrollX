@@ -3,12 +3,12 @@ const jwt = require("jsonwebtoken");
 const studentModel = require("../models/studentModel");
 const sendResetEmail = require("../utils/emailService");
 
-// ✅ Register Student
+// Register Student
 async function registerStudent(req, res) {
     const { name, rollNo, email, password } = req.body;
 
     try {
-        // ✅ Backend validation for Roll Number length
+        // Backend validation for Roll Number length
         if (rollNo.length !== 8) {
             return res.status(400).json({ message: "❌ Roll number must be exactly 8 characters long" });
         }
@@ -27,7 +27,7 @@ async function registerStudent(req, res) {
     }
 }
 
-// ✅ Login Student
+// Login Student
 async function loginStudent(req, res) {
     const { rollNo, password } = req.body;
     try {
@@ -45,7 +45,7 @@ async function loginStudent(req, res) {
     }
 }
 
-// ✅ Forgot Password
+// Forgot Password
 async function forgotPassword(req, res) {
     const { rollNo } = req.body;
     try {
@@ -65,7 +65,7 @@ async function forgotPassword(req, res) {
     }
 }
 
-// ✅ Get Student's Enrolled Courses
+// Get Student's Enrolled Courses
 async function getStudentCourses(req, res) {
     try {
         const courses = await studentModel.getEnrolledCourses(req.params.rollNo);
@@ -75,7 +75,7 @@ async function getStudentCourses(req, res) {
     }
 }
 
-// ✅ Get Courses Offered for the Next Semester
+// Get Courses Offered for the Next Semester
 async function getCoursesOffered(req, res) {
     const { rollNo } = req.params;
 
@@ -101,7 +101,7 @@ async function getCoursesOffered(req, res) {
     }
 }
 
-// ✅ Drop a Registered Course
+// Drop a Registered Course
 async function dropCourse(req, res) {
     try {
         const { rollNo, courseCode } = req.params;
@@ -112,7 +112,7 @@ async function dropCourse(req, res) {
     }
 }
 
-// ✅ Enroll in a Course
+// Enroll in a Course
 async function enrollCourse(req, res) {
     try {
         const { rollNo, courseCode, sectionId } = req.params;
