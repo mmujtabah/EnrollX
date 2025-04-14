@@ -6,6 +6,11 @@ import StudentLogin from "./pages/student/Login";
 import StudentRegister from "./pages/student/Register";
 import StudentForgotPassword from "./pages/student/ForgotPassword";
 import About from "./pages/About";
+import AdminLogin from "./pages/admin/Login"
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UpdateStudent from "./pages/admin/UpdateStudent";
+import UpdateInstructors from "./pages/admin/UpdateInstructors";
+
 
 const App = () => {
   return (
@@ -17,6 +22,10 @@ const App = () => {
         <Route path="/student-login" element={<StudentLogin />} />
         <Route path="/student-register" element={<StudentRegister />} />
         <Route path="/student-forgot-password" element={<StudentForgotPassword />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-update-student" element={<UpdateStudent />} />
+        <Route path="/admin-update-instructors" element={<UpdateInstructors />} />
       </Routes>
     </div>
   );

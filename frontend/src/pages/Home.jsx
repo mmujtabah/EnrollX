@@ -18,8 +18,8 @@ const Home = () => {
           {/* Buttons */}
           <div className="buttons">
             <Link to="/student-home" className="btn student">🎓 Student Portal</Link>
-            <Link to="/portal/teacher" className="btn teacher">🏫 Teacher Portal</Link>
-            <Link to="/portal/admin" className="btn admin">⚙️ Admin Portal</Link>
+            <Link to="/admin-update-student" className="btn teacher">🏫 Teacher Portal</Link>
+            <Link to="/admin-login" className="btn admin">⚙️ Admin Portal</Link>
           </div>
         </section>
       </div>
