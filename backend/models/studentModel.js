@@ -1,7 +1,7 @@
 const { sql, poolPromise } = require("../config/db");
 
 const studentModel = {
-  // ✅ Register Student
+  // Register Student
   createStudent: async (name, rollNo, email, hashedPassword) => {
     const pool = await poolPromise;
     await pool
@@ -15,7 +15,7 @@ const studentModel = {
       );
   },
 
-  // ✅ Fetch Student by RollNo
+  // Fetch Student by RollNo
   getStudentByRollNo: async (rollNo) => {
     const pool = await poolPromise;
     const result = await pool
@@ -25,7 +25,7 @@ const studentModel = {
     return result.recordset[0];
   },
 
-  // ✅ Update Password
+  // Update Password
   updatePassword: async (rollNo, newPassword) => {
     const pool = await poolPromise;
     await pool
@@ -37,7 +37,7 @@ const studentModel = {
       );
   },
 
-  // ✅ Fetch Enrolled Courses
+  // Fetch Enrolled Courses
   getEnrolledCourses: async (rollNo) => {
     const pool = await poolPromise;
     const result = await pool.request().input("rollNo", sql.Char(8), rollNo)
@@ -130,7 +130,7 @@ const studentModel = {
     }
   },
 
-  // ✅ Enroll in a Course
+  // Enroll in a Course
   enrollCourse: async (rollNo, courseCode, sectionId) => {
     try {
       const pool = await poolPromise;
@@ -248,7 +248,7 @@ const studentModel = {
 
       let semester = semesterResult.recordset[0]?.nextSemester || 1; // Default to 1 if no previous semester found
 
-      // ✅ Enroll the student in the course with semester
+      // Enroll the student in the course with semester
       await pool
         .request()
         .input("rollNo", sql.Char(8), rollNo)

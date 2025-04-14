@@ -1,6 +1,6 @@
 const instructorModel = require("../models/instructorModel");
 
-// ✅ Controller to Fetch Registered Students
+// Controller to Fetch Registered Students
 const fetchRegisteredStudents = async (req, res) => {
   const { instructorId, courseCode } = req.params;
 
@@ -8,7 +8,7 @@ const fetchRegisteredStudents = async (req, res) => {
   res.status(students.message ? 404 : 200).json(students);
 };
 
-// ✅ Controller to Fetch Teaching Assistants
+// Controller to Fetch Teaching Assistants
 const fetchTeachingAssistants = async (req, res) => {
   const { instructorId, courseCode } = req.params;
 
@@ -16,7 +16,7 @@ const fetchTeachingAssistants = async (req, res) => {
   res.status(tas.message ? 404 : 200).json(tas);
 };
 
-// ✅ Controller to Fetch Instructor's Courses
+// Controller to Fetch Instructor's Courses
 const fetchInstructorCourses = async (req, res) => {
   const { instructorId } = req.params;
 

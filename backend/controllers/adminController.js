@@ -1,6 +1,6 @@
 const adminModel = require("../models/adminModel");
 
-// ✅ Get all students
+// Get all students
 const getAllStudents = async (req, res) => {
     try {
         const result = await adminModel.getAllStudents();
@@ -10,7 +10,7 @@ const getAllStudents = async (req, res) => {
     }
 };
 
-// ✅ Get all instructors
+// Get all instructors
 const getAllInstructors = async (req, res) => {
     try {
         const result = await adminModel.getAllInstructors();
@@ -20,7 +20,7 @@ const getAllInstructors = async (req, res) => {
     }
 };
 
-// ✅ Add a new instructor
+// Add a new instructor
 const addInstructor = async (req, res) => {
     const { id, email, password, name } = req.body;
     try {
@@ -31,7 +31,7 @@ const addInstructor = async (req, res) => {
     }
 };
 
-// ✅ Update instructor details
+// Update instructor details
 const updateInstructor = async (req, res) => {
     const { id } = req.params;
     const { email, password, name } = req.body;
@@ -43,7 +43,7 @@ const updateInstructor = async (req, res) => {
     }
 };
 
-// ✅ Delete instructor
+// Delete instructor
 const deleteInstructor = async (req, res) => {
     const { id } = req.params;
     try {
@@ -54,7 +54,7 @@ const deleteInstructor = async (req, res) => {
     }
 };
 
-// ✅ Get all courses
+// Get all courses
 const getAllCourses = async (req, res) => {
     try {
         const result = await adminModel.getAllCourses();
@@ -64,7 +64,7 @@ const getAllCourses = async (req, res) => {
     }
 };
 
-// ✅ Add a course
+// Add a course
 const addCourse = async (req, res) => {
     const { courseCode, courseName, courseDep, creditHr, courseType, prereqCourse } = req.body;
     try {
@@ -75,7 +75,7 @@ const addCourse = async (req, res) => {
     }
 };
 
-// ✅ Update a course
+// Update a course
 const updateCourse = async (req, res) => {
     const { courseCode } = req.params;
     const { courseName, courseDep, prereqCourse } = req.body;
@@ -87,7 +87,7 @@ const updateCourse = async (req, res) => {
     }
 };
 
-// ✅ Delete a course
+// Delete a course
 const deleteCourse = async (req, res) => {
     const { courseCode } = req.params;
     try {
@@ -98,7 +98,7 @@ const deleteCourse = async (req, res) => {
     }
 };
 
-// ✅ Add Enrollment
+// Add Enrollment
 const addEnrollment = async (req, res) => {
     const { enrollId, rollNo, sectionId, courseCode, semester } = req.body;
     try {
@@ -109,7 +109,7 @@ const addEnrollment = async (req, res) => {
     }
 };
 
-// ✅ Update Enrollment Semester
+// Update Enrollment Semester
 const updateEnrollmentSemester = async (req, res) => {
     const { rollNo } = req.params;
     const { semester } = req.body;
@@ -121,7 +121,7 @@ const updateEnrollmentSemester = async (req, res) => {
     }
 };
 
-// ✅ Delete Enrollment
+// Delete Enrollment
 const deleteEnrollment = async (req, res) => {
     const { enrollId } = req.params;
     try {
