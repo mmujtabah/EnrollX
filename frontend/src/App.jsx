@@ -10,6 +10,7 @@ import AdminLogin from "./pages/admin/Login"
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UpdateStudent from "./pages/admin/UpdateStudent";
 import UpdateInstructors from "./pages/admin/UpdateInstructors";
+import CourseRegistration from "./pages/admin/CourseRegistration";
 
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/admin-update-student" element={<UpdateStudent />} />
         <Route path="/admin-update-instructors" element={<UpdateInstructors />} />
+        <Route path="/admin-course-registration" element={<CourseRegistration />} />
       </Routes>
     </div>
   );

@@ -31,7 +31,9 @@ export default function AdminDashboard() {
             <p></p>
           </div>
           <div className="admin-card active">
+            <Link to="/admin-course-registration" className="courseregistration">
             <h3>Start Course Registration</h3>
+            </Link>
             <p></p>
           </div>
         </div>
