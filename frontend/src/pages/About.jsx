@@ -8,7 +8,7 @@ const About = () => {
       <div className="about">
         <h1>About EnrollX</h1>
         <p>
-          EnrollX is a seamless and efficient course registration system for students, teachers, and administrators. 
+          EnrollX is a seamless and efficient course registration system for students, instructors, and administrators. 
           It simplifies the process of course selection, enrollment, and management for all parties involved.
         </p>
         <p>

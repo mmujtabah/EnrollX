@@ -1,15 +1,15 @@
-// src/pages/components/Layout.jsx
-import React from 'react';
-import Navbar from './Navbar';  // Import Navbar component
+// src/components/Layout.jsx
+import React from "react";
+import Navbar from "./Navbar";
 
 const Layout = ({ children }) => {
   return (
-    <div className="layout">
-      <Navbar /> {/* Add the Navbar here */}
+    <>
+      <Navbar />
       <main>
-        {children} {/* This is where the Home content will appear */}
+        {children}
       </main>
-    </div>
+    </>
   );
 };
 

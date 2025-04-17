@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./Register.css";
+import "./StudentRegister.css";
 import Layout from "../components/Layout.jsx";
 
 const Register = () => {
@@ -13,20 +13,16 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Clean and format the Roll Number
     let formattedRollNo = formData.rollNo.trim().replace(/\s+/g, "").normalize("NFKC");
-    formattedRollNo = formattedRollNo.replace(/l/g, "L"); // Convert lowercase "l" to uppercase "L"
-    // Set the cleaned roll number back to the formData
-    setFormData({ ...formData, rollNo: formattedRollNo });
+    formattedRollNo = formattedRollNo.replace(/l/g, "L");
 
-    // Create the final data object
     const finalData = { ...formData, rollNo: formattedRollNo };
 
     try {
@@ -36,11 +32,10 @@ const Register = () => {
         { withCredentials: true }
       );
 
-      localStorage.setItem("token", res.data.token);
-      window.location.href = "/dashboard";
+      alert(res.data.message || "Registration successful!");
+      window.location.href = "/student-dashboard"; // ✅ Use correct route if applicable
     } catch (err) {
       console.error("❌ Registration failed:", err);
-      console.log("❌ Backend Response:", err.response?.data);
       alert(err.response?.data?.message || "❌ Something went wrong!");
       document.querySelector("input[name='name']").focus();
     } finally {

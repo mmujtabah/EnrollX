@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./Login.css";
+import "./StudentLogin.css";
 import Layout from "../components/Layout.jsx";
 
 const Login = () => {
@@ -8,6 +9,8 @@ const Login = () => {
     rollNo: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,15 +21,12 @@ const Login = () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/students/login`,
-        formData
+        formData,
+        { withCredentials: true }
       );
 
-      // ✅ Store token for session management
-      localStorage.setItem("token", res.data.token);
       alert(res.data.message);
-
-      // Optional: Redirect to a dashboard or home page after login
-      window.location.href = "/dashboard"; 
+      navigate("/student-dashboard");
     } catch (err) {
       console.error("Login failed", err);
       alert("Error: " + (err.response?.data?.error || "Invalid credentials."));
