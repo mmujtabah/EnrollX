@@ -10,8 +10,8 @@ body {
     height: 100vh;
   }
   
-  /* Main container for student home */
-  .student-home {
+  /* Main container for student portal */
+  .student-portal {
     max-width: 1000px;
     width: 100%;
     padding: 30px;
@@ -47,7 +47,7 @@ body {
   }
   
   /* Button container */
-  .student-home-actions {
+  .student-portal-actions {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -97,11 +97,11 @@ body {
   
   /* Responsive Design */
   @media (max-width: 768px) {
-    .student-home {
+    .student-portal {
       padding: 20px;
     }
   
-    .student-home-actions {
+    .student-portal-actions {
       gap: 10px; /* Reduced gap on small screens */
     }
   }

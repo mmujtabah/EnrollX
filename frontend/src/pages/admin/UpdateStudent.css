@@ -1,0 +1,79 @@
+/* update-student.css */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.update-container {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+  max-width: 500px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: #FFD700;
+}
+
+.update-form label {
+  display: block;
+  margin-bottom: 20px;
+  color: #eee;
+}
+
+.update-form input,
+.update-form select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+}
+
+.update-form input::placeholder {
+  color: #ccc;
+}
+
+.update-btn {
+  background: linear-gradient(135deg, #3498db, #6dd5fa);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.update-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  opacity: 0.9;
+}

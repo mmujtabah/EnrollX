@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Layout from "../components/Layout"; // Import Layout component (which includes Navbar)
-import "./ForgotPassword.css"; 
+import "./StudentForgotPassword.css"; 
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({

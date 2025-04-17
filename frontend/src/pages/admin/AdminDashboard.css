@@ -1,0 +1,139 @@
+/* admin-dashboard.css */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+}
+
+.navbar h2 {
+  font-weight: 600;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-btn {
+  color: #ddd;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #FFD700;
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.nav-btn:hover {
+  color: #FFD700;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-btn:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.admin-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.admin-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.admin-card {
+  padding: 25px 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+  text-align: center;
+  width: 220px;
+}
+
+.admin-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #FFD700;
+}
+
+.admin-card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.admin-content {
+  max-width: 700px;
+  text-align: center;
+}
+
+.admin-content h1 {
+  font-size: 3rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.admin-content p {
+  font-size: 1.3rem;
+  opacity: 0.8;
+  margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}
