@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
+<<<<<<< HEAD
 import "./ViewRegisteredStudents.css"; // optional for styling
+=======
+import "./ViewRegisteredStudents.css"; 
+>>>>>>> main
 
 const RegisteredStudents = () => {
   const [students, setStudents] = useState([]);
@@ -13,8 +17,12 @@ const RegisteredStudents = () => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/instructors/registered-students`,
+<<<<<<< HEAD
           { withCredentials: true } // for cookie-based auth
         );
+=======
+          { withCredentials: true } 
+>>>>>>> main
         setStudents(res.data.students || []);
       } catch (err) {
         console.error("Error fetching students:", err);

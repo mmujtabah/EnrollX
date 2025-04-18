@@ -8,7 +8,6 @@ async function registerStudent(req, res) {
     const { name, rollNo, email, password } = req.body;
 
     try {
-        // Backend validation for Roll Number length
         if (rollNo.length !== 8) {
             return res.status(400).json({ message: "❌ Roll number must be exactly 8 characters long" });
         }
@@ -37,9 +36,20 @@ async function loginStudent(req, res) {
         const isMatch = await bcrypt.compare(password, student.password);
         if (!isMatch) return res.status(400).json({ message: "❌ Invalid credentials" });
 
-        const token = jwt.sign({ rollNo: student.roll_no }, process.env.JWT_SECRET, { expiresIn: "20m" });
+        const token = jwt.sign(
+            { rollNo: student.roll_no, role: 'student', name: student.name },
+            process.env.JWT_SECRET,
+            { expiresIn: "20m" }
+        );
 
-        res.json({ message: "✅ Login successful", token, student });
+        res.cookie("token", token, {
+            // httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Strict",
+            maxAge: 20 * 60 * 1000
+        });
+
+        res.json({ message: "✅ Login successful", student });
     } catch (error) {
         res.status(500).json({ message: "❌ Login failed", error });
     }
@@ -80,21 +90,18 @@ async function getCoursesOffered(req, res) {
     const { rollNo } = req.params;
 
     try {
-        // Fetch the registration period details
         const registrationPeriod = await studentModel.getRegistrationPeriod();
 
         if (!registrationPeriod || !registrationPeriod.is_active) {
             return res.status(400).json({ message: "❌ Registration period is not active. Please try again later." });
         }
 
-        // Fetch the courses offered based on the student's next semester
         const courses = await studentModel.getCoursesOffered(rollNo);
 
         if (courses.length === 0) {
             return res.status(404).json({ message: "❌ No courses are offered for the next semester." });
         }
 
-        // Return the list of courses for the next semester
         res.json(courses);
     } catch (error) {
         res.status(500).json({ message: "❌ Error fetching offered courses", error: error.message });
@@ -123,6 +130,40 @@ async function enrollCourse(req, res) {
     }
 }
 
+// ✅ Get Student Profile
+async function getStudentProfile(req, res) {
+    try {
+        const { rollNo } = req.params;
+        const student = await studentModel.getStudentByRollNo(rollNo);
+        if (!student) {
+            return res.status(404).json({ message: "❌ Student not found" });
+        }
+        res.json({ name: student.name, email: student.email, rollNo: student.roll_no });
+    } catch (error) {
+        console.error("❌ Error fetching student profile:", error);
+        res.status(500).json({ message: "❌ Error fetching student profile" });
+    }
+}
+
+// ✅ Update Student Profile
+async function updateStudentProfile(req, res) {
+    try {
+        const { rollNo } = req.params;
+        const { name, email } = req.body;
+
+        const student = await studentModel.getStudentByRollNo(rollNo);
+        if (!student) {
+            return res.status(404).json({ message: "❌ Student not found" });
+        }
+
+        await studentModel.updateStudentProfile(rollNo, name, email);
+        res.json({ message: "✅ Profile updated successfully" });
+    } catch (error) {
+        console.error("❌ Error updating profile:", error);
+        res.status(500).json({ message: "❌ Error updating profile" });
+    }
+}
+
 module.exports = {
     registerStudent,
     loginStudent,
@@ -131,4 +172,6 @@ module.exports = {
     getCoursesOffered,
     dropCourse,
     enrollCourse,
+    getStudentProfile,
+    updateStudentProfile,
 };
