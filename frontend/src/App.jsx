@@ -11,7 +11,13 @@ import StudentRegister from "./pages/student/StudentRegister";
 import StudentForgotPassword from "./pages/student/StudentForgotPassword";
 import StudentDashboard from "./pages/student/StudentDashboard";
 
+import InstructorPortal from "./pages/instructor/InstructorPortal";
 import InstructorLogin from "./pages/instructor/InstructorLogin";
+import InstructorForgotPassword from "./pages/instructor/InstructorForgotPassword";
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import ViewRegisteredStudents from "./pages/instructor/ViewRegisteredStudents"
+import ViewAssignedTAs from "./pages/instructor/ViewAssignedTAs"
+import ViewCoursesTaught from "./pages/instructor/ViewCoursesTaught";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -30,7 +36,11 @@ const App = () => {
         <Route path="/student-login" element={<StudentLogin />} />
         <Route path="/student-register" element={<StudentRegister />} />
         <Route path="/student-forgot-password" element={<StudentForgotPassword />} />
+
+        <Route path="/instructor-portal" element={<InstructorPortal />} />
         <Route path="/instructor-login" element={<InstructorLogin />} />
+        <Route path="/instructor-forgot-password" element={<InstructorForgotPassword />} />
+
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Protected Routes */}
@@ -39,6 +49,38 @@ const App = () => {
           element={
             <PrivateRoute>
               <StudentDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/instructor-dashboard"
+          element={
+            <PrivateRoute>
+              <InstructorDashboard />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/instructor-registered-students"
+          element={
+            <PrivateRoute>
+              <ViewRegisteredStudents />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/instructor-assigned-TAs"
+          element={
+            <PrivateRoute>
+              <ViewAssignedTAs />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/instructor-courses"
+          element={
+            <PrivateRoute>
+              <ViewCoursesTaught />
             </PrivateRoute>
           }
         />
