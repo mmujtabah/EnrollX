@@ -1,30 +1,34 @@
-const express = require("express");
+const express = require("express"); 
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const studentRoutes = require("./routes/studentRoutes");
-const instructorRoutes = require("./routes/instructorRoutes")
-const adminRoutes = require("./routes/adminRoutes")
+const instructorRoutes = require("./routes/instructorRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-// ✅ Middleware
+// Middleware
 app.use(
-    cors({
-      origin: "http://localhost:5173", // ✅ Set frontend URL, not '*'
-      credentials: true, // ✅ Allow credentials (cookies, headers)
-    })
-  );
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
-// ✅ Routes
+// Routes
 app.use("/api/students", studentRoutes);
-app.use("/api/instructors", instructorRoutes)
-app.use("/api/admins", adminRoutes)
+app.use("/api/instructors", instructorRoutes);
+app.use("/api/admins", adminRoutes);
+app.use("/api", authRoutes); // Mount the auth-check route
 
-// ✅ Test Route
+// Test Route
 app.get("/", (req, res) => res.send("🚀 Server is running!"));
 
-// ✅ Start Server
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
