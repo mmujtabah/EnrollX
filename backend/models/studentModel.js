@@ -1,7 +1,6 @@
 const { sql, poolPromise } = require("../config/db");
 
 const studentModel = {
-  // Register Student
   createStudent: async (name, rollNo, email, hashedPassword) => {
     const pool = await poolPromise;
     await pool

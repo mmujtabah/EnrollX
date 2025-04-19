@@ -10,6 +10,8 @@ import StudentLogin from "./pages/student/StudentLogin";
 import StudentRegister from "./pages/student/StudentRegister";
 import StudentForgotPassword from "./pages/student/StudentForgotPassword";
 import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentCourses from "./pages/student/StudentCourses";
+import StudentChangePassword from "./pages/student/StudentChangePassword";
 
 import InstructorLogin from "./pages/instructor/InstructorLogin";
 
@@ -26,11 +28,17 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+
         <Route path="/student-portal" element={<StudentPortal />} />
         <Route path="/student-login" element={<StudentLogin />} />
         <Route path="/student-register" element={<StudentRegister />} />
-        <Route path="/student-forgot-password" element={<StudentForgotPassword />} />
+        <Route
+          path="/student-forgot-password"
+          element={<StudentForgotPassword />}
+        />
+
         <Route path="/instructor-login" element={<InstructorLogin />} />
+
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Protected Routes */}
@@ -42,6 +50,25 @@ const App = () => {
             </PrivateRoute>
           }
         />
+
+        <Route
+          path="/student-courses"
+          element={
+            <PrivateRoute>
+              <StudentCourses />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/student-change-password"
+          element={
+            <PrivateRoute>
+              <StudentChangePassword />
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/admin-dashboard"
           element={
@@ -50,6 +77,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/admin-update-student"
           element={
@@ -58,6 +86,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
+
         <Route
           path="/admin-update-instructors"
           element={
@@ -66,6 +95,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        
         <Route
           path="/admin-course-registration"
           element={

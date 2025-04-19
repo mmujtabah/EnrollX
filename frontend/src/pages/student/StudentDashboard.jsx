@@ -54,19 +54,49 @@ const StudentDashboard = () => {
     <Layout>
       <div className="student-dashboard">
         <h1>Student Dashboard</h1>
-        <p>Welcome, {studentName || "Student"}! Access and manage your academic activities efficiently.</p>
+        <p>
+          Welcome, {studentName || "Student"}! Access and manage your academic
+          activities efficiently.
+        </p>
         <div className="dashboard-cards">
-          <div className={`dashboard-card ${animate ? "dashboard-card-animated" : ""}`}>
+          <div
+            className={`dashboard-card ${
+              animate ? "dashboard-card-animated" : ""
+            }`}
+            onClick={() => navigate("/student-courses")}
+          >
             <h2>📘 My Courses</h2>
             <p>View all your enrolled courses in detail.</p>
           </div>
-          <div className={`dashboard-card ${animate ? "dashboard-card-animated" : ""}`}>
+
+          <div
+            className={`dashboard-card ${
+              animate ? "dashboard-card-animated" : ""
+            }`}
+            onClick={() => navigate("/student/courses-offered")}
+          >
             <h2>🧾 Courses Offered</h2>
             <p>Browse and enroll in available courses this semester.</p>
           </div>
-          <div className={`dashboard-card ${animate ? "dashboard-card-animated" : ""}`}>
+
+          <div
+            className={`dashboard-card ${
+              animate ? "dashboard-card-animated" : ""
+            }`}
+            onClick={() => navigate("/student/drop-course")}
+          >
             <h2>❌ Drop Course</h2>
             <p>Manage and drop your enrolled courses with ease.</p>
+          </div>
+
+          <div
+            className={`dashboard-card ${
+              animate ? "dashboard-card-animated" : ""
+            }`}
+            onClick={() => navigate("/student/change-password")}
+          >
+            <h2>🔒 Change Password</h2>
+            <p>Securely update your account password here.</p>
           </div>
         </div>
 
