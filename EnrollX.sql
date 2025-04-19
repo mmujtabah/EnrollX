@@ -6,7 +6,8 @@ CREATE TABLE Students (
     roll_no CHAR(8) PRIMARY KEY,
     email VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL,
+    current_semester INT CHECK (current_semester >= 1 AND current_semester <= 8) NOT NULL DEFAULT 1
 );
 
 CREATE TABLE Instructors (
@@ -21,7 +22,7 @@ CREATE TABLE Courses (
     course_name VARCHAR(50) UNIQUE NOT NULL,
     course_dep VARCHAR(50) NOT NULL,
     credit_hr INT CHECK (credit_hr >= 1 AND credit_hr <= 3) NOT NULL,
-    course_type VARCHAR(10) CHECK (course_type IN ('elective', 'core')) NOT NULL,
+    course_type VARCHAR(10) CHECK (course_type IN ('Elective', 'Core')) NOT NULL,
     course_semester INT CHECK(course_semester >= 1 AND course_semester <= 8) NOT NULL
 );
 
@@ -52,7 +53,6 @@ CREATE TABLE Enrollments (
     roll_no CHAR(8), 
     section_id CHAR(9),
     course_code VARCHAR(9),
-    semester INT CHECK (semester >= 1 AND semester <= 8) NOT NULL,
     enroll_datetime DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (roll_no) REFERENCES Students(roll_no) 
         ON DELETE CASCADE 
@@ -82,33 +82,25 @@ CREATE TABLE Registration_Period (
     is_active BIT DEFAULT 0
 );
 
--- Admin Controlled Queries
+CREATE TABLE Admin(
+    admin_id CHAR(9) PRIMARY KEY,
+    password VARCHAR(100) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+);
+
+
 GO
 CREATE PROCEDURE REGISTER_STUDENT
     @rollNo CHAR(8),  
     @email VARCHAR(50),                   
     @password VARCHAR(100),
-    @name VARCHAR(50)
+    @name VARCHAR(50),
+    @current_semester INT
 AS
 BEGIN
-    INSERT INTO Students (name, roll_no, email, password) 
-    VALUES (@name, @rollNo, @email, @password)
+    INSERT INTO Students (name, roll_no, email, password, current_semester) 
+    VALUES (@name, @rollNo, @email, @password, @current_semester)
 END
-
-EXEC REGISTER_STUDENT @name = 'Ahmed Ali', @rollNo = '23L0500', @email = '23l0500@lhr.nu.edu.pk', @password = '12345678'
-EXEC REGISTER_STUDENT @name = 'Ali Ahmed', @rollNo = '23L0501', @email = '23l0501@lhr.nu.edu.pk', @password = '1234567890'
-EXEC REGISTER_STUDENT @name = 'Jahangir Ahmed', @rollNo = '23L0502', @email = '23l0502@lhr.nu.edu.pk', @password = '123456789'
-
-GO
-CREATE PROCEDURE GET_STUDENT_ROLLNO
-    @rollNo CHAR(8)
-AS
-BEGIN
-    SELECT * FROM Students 
-    WHERE roll_no = @rollNo
-END
-
-EXEC GET_STUDENT_ROLLNO @rollNO = '23L0500'
 
 GO
 CREATE PROCEDURE UPDATE_PASSWORD
@@ -119,8 +111,6 @@ BEGIN
     UPDATE Students SET password = @password 
     WHERE roll_no = @rollNo
 END
-
-EXEC UPDATE_PASSWORD @rollNo = '23L0500', @password = '!@#123456!@#'
 
 GO
 CREATE PROCEDURE GET_ENROLLED_COURSES
@@ -133,9 +123,7 @@ BEGIN
     WHERE E.roll_no = @rollNo
 END
 
-EXEC GET_ENROLLED_COURSES @rollNo = '23L0500'
-
-GO 
+GO
 CREATE PROCEDURE GET_COURSES_OFFERED
     @rollNo CHAR(8)
 AS
@@ -145,92 +133,101 @@ BEGIN
     JOIN Course_Sections cs ON c.course_code = cs.course_code
     JOIN Registration_Period rp ON GETDATE() BETWEEN rp.start_datetime AND rp.end_datetime AND rp.is_active = 1
     WHERE c.course_semester = (
-        SELECT MAX(e.semester) + 1
-        FROM Enrollments e
-        WHERE e.roll_no = @rollNo
+        SELECT current_semester
+        FROM Students
+        WHERE roll_no = @rollNo
     )
     ORDER BY c.course_semester
 END
 
+GO
+CREATE PROCEDURE ENROLL_STUDENT
+    @rollNo CHAR(8),
+    @courseCode VARCHAR(9),
+    @sectionId CHAR(9)
+AS
+BEGIN
+    DECLARE @courseType VARCHAR(10)
+    DECLARE @prevSectionId CHAR(9)
+    DECLARE @prevSectionChar CHAR(1)
+    DECLARE @newSectionChar CHAR(1)
+    DECLARE @availableSeats INT
 
-SELECT * FROM Registration_Period 
-WHERE GETDATE() BETWEEN start_datetime AND end_datetime AND is_active = 1
+    SELECT @courseType = course_type 
+    FROM Courses 
+    WHERE course_code = @courseCode
+
+    SELECT @availableSeats = available_seats 
+    FROM Course_Sections 
+    WHERE section_id = @sectionId
+
+    IF @availableSeats IS NULL
+    BEGIN
+        RAISERROR('Invalid section ID.', 16, 1)
+        RETURN
+    END
+
+    IF @availableSeats <= 0
+    BEGIN
+        RAISERROR('No seats available in this section.', 16, 1)
+        RETURN
+    END
+
+    IF @courseType = 'Core'
+    BEGIN
+        SELECT TOP 1 @prevSectionId = E.section_id
+        FROM Enrollments E
+        JOIN Courses C ON E.course_code = C.course_code
+        WHERE E.roll_no = @rollNo AND C.course_type = 'Core'
+        ORDER BY E.semester DESC
+
+        SET @prevSectionChar = RIGHT(@prevSectionId, 1)
+        SET @newSectionChar = RIGHT(@sectionId, 1)
+
+        IF @prevSectionChar <> @newSectionChar
+        BEGIN
+            RAISERROR('Section mismatch. You must enroll in the same section group as your previous core course.', 16, 1)
+            RETURN
+        END
+    END
+
+    INSERT INTO Enrollments (roll_no, course_code, section_id) 
+    VALUES (@rollNo, @courseCode, @sectionId)
+
+    UPDATE Course_Sections
+    SET available_seats = available_seats - 1
+    WHERE section_id = @sectionId
+END
 
 GO
 CREATE PROCEDURE CHECK_STUDENT
-    @rollNo CHAR(8)
-AS
-BEGIN
-    SELECT * FROM Students 
-    WHERE roll_no = @rollNo
-END
-
-EXEC CHECK_STUDENT @rollNo = '23L0500'
-
-GO
-CREATE PROCEDURE CHECK_COURSE 
-    @courseCode VARCHAR(9)
-AS 
-BEGIN
-    SELECT * FROM Courses 
-    WHERE course_code = @courseCode
-END
-
-EXEC CHECK_COURSE @courseCode = 'CS1001'
- 
-GO
-CREATE PROCEDURE CHECK_ENROLLMENT
     @rollNo CHAR(8),
-    @courseCode VARCHAR(9)
+    @name VARCHAR(50) OUTPUT,
+    @email VARCHAR(50) OUTPUT,
+    @status BIT OUTPUT
 AS
 BEGIN
-    SELECT * FROM Enrollments 
-    WHERE roll_no = @rollNo AND course_code = @courseCode
+    IF EXISTS (SELECT 1 FROM Students WHERE roll_no = @rollNo)
+    BEGIN
+        SELECT @name = name, @email = email FROM Students WHERE roll_no = @rollNo
+        SET @status = 1
+    END
+    ELSE
+    BEGIN
+        SET @name = NULL
+        SET @email = NULL
+        SET @status = 0
+    END
 END
 
-EXEC CHECK_ENROLLMENT @rollNo = '23L0500', @courseCode = 'CS1001'
-
-GO
-CREATE PROCEDURE DELETE_ENROLLMENT
-    @rollNo CHAR(8),
-    @courseCode VARCHAR(9)
-AS
-BEGIN
-    DELETE FROM Enrollments
-    WHERE roll_no = @rollNo AND course_code = @courseCode
-END
-
-EXEC DELETE_ENROLLMENT @rollNo = '23L0500', @courseCode = 'CS1001'
 
 SELECT * FROM Registration_Period 
 WHERE GETDATE() BETWEEN start_datetime AND end_datetime 
 AND is_active = 1
 
-GO
-CREATE PROCEDURE GET_COURSE_TYPE
-    @courseCode VARCHAR(9)
-AS 
-BEGIN
-    SELECT course_type 
-    FROM Courses 
-    WHERE course_code = @courseCode
-END
-
-EXEC GET_COURSE_TYPE @courseCode = 'CS1001'
 
 GO
-CREATE PROCEDURE GET_SECTION
-    @rollNo CHAR(8)
-AS 
-BEGIN
-    SELECT TOP 1 section_id 
-    FROM Enrollments E
-    JOIN Courses C ON E.course_code = C.course_code
-    WHERE E.roll_no = @rollNo AND C.course_type = 'core'
-END
-
-GO
-CREATE PROCEDURE GET_CR_HR
+CREATE PROCEDURE GET_CREDITHR
     @rollNo CHAR(8)
 AS
 BEGIN
@@ -240,50 +237,20 @@ BEGIN
     WHERE E.roll_no = @rollNo
 END
 
-EXEC GET_CR_HR @rollNo = '23L0500'
-
 GO
-CREATE PROCEDURE GET_COURSE_CR_HR
-    @courseCode VARCHAR(9)
-AS 
-BEGIN 
-    SELECT credit_hr 
-    FROM Courses 
-    WHERE course_code = @courseCode
-END
-
-EXEC GET_COURSE_CR_HR @courseCode = 'CS1001'
-
-GO
-CREATE PROCEDURE NEXT_SEM 
-    @rollNo CHAR(8)
+CREATE PROCEDURE INCREMENT_SEM
 AS
 BEGIN
-    SELECT MAX(semester) + 1 AS nextSemester 
-    FROM Enrollments 
-    WHERE roll_no = @rollNo
+    UPDATE Students
+    SET current_semester = current_semester + 1
+    WHERE current_semester < 8
 END
-
-EXEC NEXT_SEM @rollNo = '23L0500'
-
-GO
-CREATE PROCEDURE ENROLL_STUDENT
-    @rollNo CHAR(8),
-    @courseCode VARCHAR(9),
-    @sectionId CHAR(9),
-    @semester INT
-AS
-BEGIN
-    INSERT INTO Enrollments (roll_no, course_code, section_id, semester) 
-    VALUES (@rollNo, @courseCode, @sectionId, @semester)
-END
-
--- Instructors Queries
 
 GO
 CREATE PROCEDURE GET_REGISTERED_STUDENTS
     @instructorId CHAR(9),
-    @courseCode VARCHAR(9)
+    @courseCode VARCHAR(9),
+    @sectionId CHAR(9)
 AS 
 BEGIN
     SELECT cs.instructor_id, s.roll_no, s.name, cs.course_code, cs.section_id
@@ -291,28 +258,38 @@ BEGIN
     JOIN Enrollments e ON cs.section_id = e.section_id
     JOIN Students s ON e.roll_no = s.roll_no
     WHERE cs.instructor_id = @instructorId 
-    AND cs.course_code = @courseCode
+      AND cs.course_code = @courseCode
+      AND cs.section_id = @sectionId
 END
+
 
 GO
 CREATE PROCEDURE GET_TEACHER_ASSISTANTS
     @instructorId CHAR(9),
-    @courseCode VARCHAR(9)
+    @courseCode VARCHAR(9),
+    @sectionId CHAR(9)
 AS
 BEGIN
-    SELECT i.id AS instructor_id, i.name AS instructor_name, 
-    ta.roll_no AS ta_roll_no, s.name AS ta_name, cs.course_code, cs.section_id
+    SELECT 
+        i.id AS instructor_id, 
+        i.name AS instructor_name, 
+        ta.roll_no AS ta_roll_no, 
+        s.name AS ta_name, 
+        cs.course_code, 
+        cs.section_id
     FROM Students s 
     JOIN TA ta ON s.roll_no = ta.roll_no
     JOIN Course_Section_TA cst ON ta.roll_no = cst.TA_roll_no
     JOIN Course_Sections cs ON cs.section_id = cst.section_id
     JOIN Instructors i ON i.id = cs.instructor_id
     WHERE cs.instructor_id = @instructorId 
-    AND cs.course_code = @courseCode
+      AND cs.course_code = @courseCode
+      AND cs.section_id = @sectionId
 END
 
+
 GO 
-CREATE PROCEDURE GET_COURSES_TAUGHT
+CREATE PROCEDURE GET_COURSES_TEACHING
     @instructorId CHAR(9)
 AS
 BEGIN
@@ -322,31 +299,34 @@ BEGIN
     WHERE cs.instructor_id = @instructorId
 END
 
--- Admin Queries (CRUD OPERATIONS)
-
-SELECT * FROM Students
-
-SELECT * FROM Instructors
 
 GO
-CREATE PROCEDURE ADD_INSTRUCTOR
+CREATE PROCEDURE GET_INSTRUCTOR_DETAILS
     @id CHAR(9),
-    @email VARCHAR(50), 
-    @password VARCHAR(100),
-    @name VARCHAR(50)
+    @email VARCHAR(50) OUTPUT,
+    @name VARCHAR(50) OUTPUT,
+    @status BIT OUTPUT
 AS
 BEGIN
-    INSERT INTO Instructors (id, email, password, name) 
-    VALUES (@id, @email, @password, @name)
+    IF EXISTS (SELECT 1 FROM Instructors WHERE id = @id)
+    BEGIN
+        SELECT @email = email, @name = name
+        FROM Instructors
+        WHERE id = @id
+        SET @status = 1
+    END
+    ELSE
+    BEGIN
+        SET @email = NULL
+        SET @name = NULL
+        SET @status = 0
+    END
 END
-
-EXEC ADD_INSTRUCTOR @id = 'ID0000001', @email = 'john.doe@example.com', @password = '12345678', @name = 'John Doe'
 
 GO
 CREATE PROCEDURE UPDATE_INSTRUCTOR
     @id CHAR(9),
     @email VARCHAR(50), 
-    @password VARCHAR(100),
     @name VARCHAR(50)
 AS
 BEGIN
@@ -354,21 +334,6 @@ BEGIN
     SET email = @email, password = @password, name = @name 
     WHERE id = @id
 END
-
-EXEC UPDATE_INSTRUCTOR @id = 'ID0000001', @email = 'john.adams.doe@example.com', @password = '87654321', @name = 'John Adams'
-
-GO
-CREATE PROCEDURE DELETE_INSTRUCTOR 
-    @id CHAR(9)
-AS
-BEGIN
-    DELETE FROM Instructors 
-    WHERE id = @id
-END
-
-EXEC DELETE_INSTRUCTOR @id = 'ID0000001'
-
-SELECT * FROM Courses
 
 GO
 CREATE PROCEDURE ADD_COURSE
@@ -384,70 +349,6 @@ BEGIN
     VALUES (@courseCode, @courseName, @courseDep, @creditHr, @courseType, @courseSemester)
 END
 
-EXEC ADD_COURSE @courseCode = 'CS1001', @courseName = 'PF', @courseDep = 'CS', @creditHr = 3, @courseType = 'core', @courseSemester = 1
-
-GO 
-CREATE PROCEDURE UPDATE_COURSE
-    @courseCode VARCHAR(9),
-    @courseName VARCHAR(50),
-    @courseDep VARCHAR(50),
-    @courseSemester INT
-AS 
-BEGIN 
-    UPDATE Courses 
-    SET course_name = @courseName, course_dep = @courseDep, course_semester = @courseSemester
-    WHERE course_code = @courseCode
-END
-
-EXEC UPDATE_COURSE @courseCode = 'CS1001', @courseName = 'Intro to ICT', @courseDep = 'CSE', @courseSemester = 1
-
-GO 
-CREATE PROCEDURE DELETE_COURSE 
-    @course_code VARCHAR(9)
-AS
-BEGIN
-    DELETE FROM Courses WHERE course_code = @course_code
-END
-
-INSERT INTO Course_Sections(section_id, course_code, instructor_id, max_capacity)
-VALUES ('LHRBSCS4A','CS1001','ID0000001',25)
-
-GO 
-CREATE PROCEDURE ADD_ENROLLMENTS 
-    @rollNo CHAR(8), 
-    @sectionId CHAR(9),
-    @courseCode VARCHAR(9),
-    @semester INT
-AS
-BEGIN
-    INSERT INTO Enrollments (roll_no, section_id, course_code, semester) 
-    VALUES  (@rollNo, @sectionId, @courseCode, @semester)
-END
-
-EXEC ADD_ENROLLMENTS @roLLNo = '23L0500', @sectionId = 'LHRBSCS4A', @courseCode = 'CS1001', @semester = 4
-
-GO 
-CREATE PROCEDURE UPDATE_ENROLLMENTS
-    @rollNo CHAR(8), 
-    @semester INT   
-AS
-BEGIN
-    UPDATE Enrollments 
-    SET semester = @semester 
-    WHERE roll_no = @rollNo
-END
-
-EXEC UPDATE_ENROLLMENTS @rollNo = '23L0500', @semester = 3
-
-GO 
-CREATE PROCEDURE DELETE_ENROLLMENTS
-    @enrollId INT
-AS
-BEGIN
-    DELETE FROM Enrollments WHERE enroll_id = @enrollId
-END
-
-
 GO
 CREATE PROCEDURE UPDATE_STUDENTS
     @rollNo CHAR(8),
@@ -458,5 +359,3 @@ BEGIN
     SET name = @name 
     WHERE roll_no = @rollNo
 END
-
-EXEC UPDATE_STUDENTS @rollNo = '23L0500', @name = 'Ahmed Ali Khan'
