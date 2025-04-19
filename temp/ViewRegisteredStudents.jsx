@@ -3,8 +3,6 @@ import Layout from "../components/Layout";
 import axios from "axios";
 import "./ViewRegisteredStudents.css"; // optional for styling
 
-import "./ViewRegisteredStudents.css"; 
-
 const RegisteredStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +15,6 @@ const RegisteredStudents = () => {
           `${import.meta.env.VITE_API_URL}/api/instructors/registered-students`,
           { withCredentials: true } // for cookie-based auth
         );
-
-          { withCredentials: true } 
         setStudents(res.data.students || []);
       } catch (err) {
         console.error("Error fetching students:", err);
