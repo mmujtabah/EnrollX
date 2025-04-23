@@ -11,8 +11,8 @@ router.get("/auth-check", verifyToken, (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "Lax", // or "None" if you're using HTTPS + cross-site
-    secure: false, // set to true in production with HTTPS
+    sameSite: "Lax", 
+    secure: false, 
   });
   res.json({ message: "✅ Logged out and token cleared" });
 });
