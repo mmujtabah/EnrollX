@@ -1,20 +1,73 @@
-/* src/pages/About.css */
+.about-container {
+  padding: 40px 20px;
+  background-color: #0f172a;
+  color: #f1f5f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
 
-.about {
-    text-align: center;
-    padding: 20px;
-    color: white;
-    background: #0f172a; /* Dark Navy Background */
-  }
-  
-  .about h1 {
-    font-size: 3rem;
-    color: #FFD700;
-  }
-  
-  .about p {
-    font-size: 1.2rem;
-    margin-top: 10px;
-    opacity: 0.8;
-  }
-  
+.about-header h1 {
+  font-size: 3rem;
+  color: #facc15; /* Golden Yellow */
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: #94a3b8;
+  margin-bottom: 30px;
+}
+
+.about-description p {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 10px auto;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+.team-section {
+  margin-top: 50px;
+}
+
+.team-section h2 {
+  font-size: 2rem;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+.team-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.team-member {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+}
+
+.team-member h3 {
+  color: #fbbf24;
+  margin-bottom: 5px;
+}
+
+.team-member p {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
+
+.team-credit {
+  margin-top: 30px;
+  font-style: italic;
+  color: #94a3b8;
+}

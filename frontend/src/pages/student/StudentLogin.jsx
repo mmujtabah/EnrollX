@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";  // Import toast
+import "react-toastify/dist/ReactToastify.css";  // Import the styles
 import "./StudentLogin.css";
 import Layout from "../components/Layout.jsx";
 
@@ -24,17 +26,30 @@ const Login = () => {
         formData,
         { withCredentials: true }
       );
+      
+      // Ensure that res.data.message exists
+      console.log(res.data.message);  // Log the message to check
 
-      alert(res.data.message);
-      navigate("/student-dashboard");
+      // Replace alert with toast
+      toast.success(res.data.message); // Success toast
+
+      // Add a delay before navigating
+      setTimeout(() => {
+        navigate("/student-dashboard");
+      }, 1000); // 1 second delay before redirecting
     } catch (err) {
       console.error("Login failed", err);
-      alert("Error: " + (err.response?.data?.error || "Invalid credentials."));
+      
+      // Replace alert with error toast
+      toast.error("Error: " + (err.response?.data?.error || "Invalid credentials.")); // Error toast
     }
   };
 
   return (
     <Layout>
+      {/* Make sure ToastContainer is in the right place */}
+      <ToastContainer position="top-right" autoClose={3000} />  {/* ToastContainer for toast notifications */}
+      
       <div className="login-container">
         <div className="login-box">
           <h2>Student Login</h2>

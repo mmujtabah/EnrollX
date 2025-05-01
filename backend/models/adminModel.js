@@ -129,7 +129,6 @@ const adminModel = {
             .query(`DELETE FROM Enrollments WHERE enroll_id = @enrollId`);
     },
 
-    // Update student name
     updateStudentName: async (rollNo, name) => {
         const pool = await poolPromise;
         return pool.request()

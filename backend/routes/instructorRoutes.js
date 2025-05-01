@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const instructorController = require("../controllers/instructorController");
+const { verifyToken, verifyRole } = require("../middleware/auth");
 
-// Route to Get Registered Students
-router.get("/:instructorId/students/:courseCode", instructorController.fetchRegisteredStudents);
+router.post("/login", instructorController.fetchInstructorLogin);
 
-// Route to Get Teaching Assistants
-router.get("/:instructorId/tas/:courseCode", instructorController.fetchTeachingAssistants);
+router.get("/:instructorId/students/:courseCode/:sectionId", verifyToken, verifyRole(['instructor']), instructorController.fetchRegisteredStudents);
+router.get("/:instructorId/tas/:courseCode/:sectionId", verifyToken, verifyRole(['instructor']), instructorController.fetchTeachingAssistants);
+router.get("/:instructorId/courses", verifyToken, verifyRole(['instructor']), instructorController.getInstructorCourses);
+router.put("/change-password", verifyToken, verifyRole(['instructor']), instructorController.changePassword);
 
-// Route to Get Courses Taught by an Instructor
-router.get("/:instructorId/courses", instructorController.fetchInstructorCourses);
 
 module.exports = router;

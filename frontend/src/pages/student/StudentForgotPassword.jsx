@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Layout from "../components/Layout"; // Import Layout component (which includes Navbar)
+import Layout from "../components/Layout";
 import "./StudentForgotPassword.css"; 
 
 const ForgotPassword = () => {
@@ -8,15 +8,14 @@ const ForgotPassword = () => {
     rollNo: "",
     email: "",
   });
-  const [loading, setLoading] = useState(false); // To handle loading state
-
+  const [loading, setLoading] = useState(false); 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleReset = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/students/forgot-password`,
@@ -25,10 +24,11 @@ const ForgotPassword = () => {
       alert(res.data.message);
     } catch (err) {
       console.error("Error:", err);
-      alert("Error: " + err.response?.data?.error || "Password reset failed.");
+      alert("Error: " + err.response?.data?.message || "Password reset failed.");
     }
-    setLoading(false); // End loading
+    setLoading(false); 
   };
+  
 
   return (
     <Layout> {/* Wrap your content with Layout to include Navbar */}

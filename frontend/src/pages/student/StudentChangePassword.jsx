@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./StudentChangePassword.css";
 import Layout from "../components/Layout.jsx";
 
 const ChangePassword = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -17,19 +17,18 @@ const ChangePassword = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/change-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/students/change-password`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ currentPassword, newPassword }),
+        body: JSON.stringify({ newPassword }),
       });
 
       const data = await response.json();
       if (response.ok) {
-        setMessage("✅ Password changed successfully!");
-        setCurrentPassword("");
+        setMessage("Password changed successfully!");
         setNewPassword("");
         setConfirmPassword("");
       } else {
@@ -44,15 +43,14 @@ const ChangePassword = () => {
   return (
     <Layout>
       <div className="change-password-container">
-        <h2>🔒 Change Password</h2>
+        <h2>Change Password</h2>
+
+        {/* 🔙 Back to Dashboard */}
+        <Link to="/student-dashboard" className="back-button">
+          Back to Dashboard
+        </Link>
+
         <form className="change-password-form" onSubmit={handleSubmit}>
-          <input
-            type="password"
-            placeholder="Current Password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            required
-          />
           <input
             type="password"
             placeholder="New Password"

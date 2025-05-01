@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const studentModel = require("../models/studentModel");
 const sendResetEmail = require("../utils/emailService");
 
-// Register Student
 async function registerStudent(req, res) {
     const { name, rollNo, email, password } = req.body;
 
@@ -26,66 +25,94 @@ async function registerStudent(req, res) {
     }
 }
 
-// Login Student
 async function loginStudent(req, res) {
-    const { rollNo, password } = req.body;
-    try {
-        const student = await studentModel.getStudentByRollNo(rollNo);
-        if (!student) return res.status(404).json({ message: "❌ Student not found" });
+  const { rollNo, password } = req.body;
+  try {
+      const student = await studentModel.getStudentByRollNo(rollNo);
+      if (!student) {
+          return res.status(404).json({ message: "❌ Student not found" });
+      }
+      const isMatch = await bcrypt.compare(password, student.password);
+      if (!isMatch) {
+          return res.status(400).json({ message: "❌ Invalid credentials" });
+      }
+      const token = jwt.sign(
+          { rollNo: rollNo, role: 'student', name: student.name,  currentSemester: student.currentSemester },
+          process.env.JWT_SECRET,
+          { expiresIn: "20m" }
+      );
+      res.cookie("token", token, {
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: 20 * 60 * 1000
+      });
 
-        const isMatch = await bcrypt.compare(password, student.password);
-        if (!isMatch) return res.status(400).json({ message: "❌ Invalid credentials" });
-
-        const token = jwt.sign(
-            { rollNo: student.roll_no, role: 'student', name: student.name },
-            process.env.JWT_SECRET,
-            { expiresIn: "20m" }
-        );
-
-        res.cookie("token", token, {
-            // httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
-            maxAge: 20 * 60 * 1000
-        });
-
-        res.json({ message: "✅ Login successful", student });
-    } catch (error) {
-        res.status(500).json({ message: "❌ Login failed", error });
-    }
+      res.json({ message: "Login successful", student });
+  } catch (error) {
+      console.error("Login failed", error);
+      res.status(500).json({ message: "❌ Login failed", error: error.message });
+  }
 }
 
-// Forgot Password
 async function forgotPassword(req, res) {
     const { rollNo } = req.body;
     try {
         const student = await studentModel.getStudentByRollNo(rollNo);
-        if (!student) return res.status(404).json({ message: "❌ Student not found" });
+        
+        if (!student) {
+            return res.status(404).json({ message: "❌ Student not found" });
+        }
 
-        const tempPassword = Math.random().toString(36).slice(-8);    
+        const tempPassword = Math.random().toString(36).slice(-8);
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
         await studentModel.updatePassword(rollNo, hashedPassword);
 
-        await sendResetEmail(student.email, student.name, tempPassword); 
+        await sendResetEmail(student.email, student.name, tempPassword);
 
         res.json({ message: "✅ Temporary password sent to your email" });
     } catch (error) {
         console.error("❌ Password reset error:", error);
-        res.status(500).json({ message: "❌ Password reset failed", error });
+        res.status(500).json({ message: "❌ Password reset failed", error: error.message || error });
     }
 }
 
-// Get Student's Enrolled Courses
+async function changePassword(req, res) {
+    const { newPassword } = req.body;
+    const rollNo = req.user?.rollNo;
+  
+    try {
+      if (!rollNo) {
+        return res.status(401).json({ message: "❌ Unauthorized: Roll number missing in token" });
+      }
+  
+      const student = await studentModel.getStudentByRollNo(rollNo);
+  
+      if (!student) {
+        return res.status(404).json({ message: "❌ Student not found" });
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await studentModel.updatePassword(rollNo, hashedPassword);
+  
+      res.json({ message: "✅ Password successfully changed." });
+    } catch (error) {
+      console.error("❌ Password change error:", error);
+      res.status(500).json({ message: "❌ Failed to change password", error: error.message || error });
+    }
+  }
+  
+  
+
 async function getStudentCourses(req, res) {
     try {
-        const courses = await studentModel.getEnrolledCourses(req.params.rollNo);
-        res.json(courses);
+      const courses = await studentModel.getEnrolledCourses(req.params.rollNo);
+      res.json(courses);
     } catch (error) {
-        res.status(500).json({ message: "❌ Error fetching enrolled courses", error });
+      console.error("❌ Error fetching enrolled courses:", error);
+      res.status(500).json({ message: "❌ Error fetching enrolled courses", error });
     }
-}
+  }
 
-// Get Courses Offered for the Next Semester
 async function getCoursesOffered(req, res) {
     const { rollNo } = req.params;
 
@@ -97,7 +124,6 @@ async function getCoursesOffered(req, res) {
         }
 
         const courses = await studentModel.getCoursesOffered(rollNo);
-
         if (courses.length === 0) {
             return res.status(404).json({ message: "❌ No courses are offered for the next semester." });
         }
@@ -108,7 +134,6 @@ async function getCoursesOffered(req, res) {
     }
 }
 
-// Drop a Registered Course
 async function dropCourse(req, res) {
     try {
         const { rollNo, courseCode } = req.params;
@@ -119,18 +144,17 @@ async function dropCourse(req, res) {
     }
 }
 
-// Enroll in a Course
 async function enrollCourse(req, res) {
     try {
-        const { rollNo, courseCode, sectionId } = req.params;
-        res.json(await studentModel.enrollCourse(rollNo, courseCode, sectionId));
+      const { rollNo, courseCode } = req.params;
+      res.json(await studentModel.enrollCourse(rollNo, courseCode));
     } catch (error) {
-        console.error("❌ Error enrolling course:", error);
-        res.status(500).json({ message: "❌ Error enrolling in course" });
+      console.error("❌ Error enrolling course:", error);
+      res.status(500).json({ message: "❌ Error enrolling in course" });
     }
-}
+  }
+  
 
-// ✅ Get Student Profile
 async function getStudentProfile(req, res) {
     try {
         const { rollNo } = req.params;
@@ -145,7 +169,6 @@ async function getStudentProfile(req, res) {
     }
 }
 
-// ✅ Update Student Profile
 async function updateStudentProfile(req, res) {
     try {
         const { rollNo } = req.params;
@@ -164,6 +187,17 @@ async function updateStudentProfile(req, res) {
     }
 }
 
+async function getCurrentCreditHours(req, res) {
+    try {
+      const { rollNo } = req.params;
+      const creditHours = await studentModel.getCurrentCreditHours(rollNo);
+      res.json({ creditHours });
+    } catch (error) {
+      console.error("❌ Error fetching current credit hours:", error);
+      res.status(500).json({ message: "❌ Error fetching current credit hours", error: error.message });
+    }
+  } 
+
 module.exports = {
     registerStudent,
     loginStudent,
@@ -174,4 +208,6 @@ module.exports = {
     enrollCourse,
     getStudentProfile,
     updateStudentProfile,
+    getCurrentCreditHours,
+    changePassword
 };

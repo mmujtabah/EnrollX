@@ -1,5 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import PrivateRoute from "./routes/PrivateRoute";
 
 import Home from "./pages/Home";
@@ -11,9 +14,15 @@ import StudentRegister from "./pages/student/StudentRegister";
 import StudentForgotPassword from "./pages/student/StudentForgotPassword";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourses from "./pages/student/StudentCourses";
+import StudentCoursesOffer from "./pages/student/StudentCoursesOffer";
 import StudentChangePassword from "./pages/student/StudentChangePassword";
 
 import InstructorLogin from "./pages/instructor/InstructorLogin";
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import InstructorCourses from "./pages/instructor/Courses";
+import CourseStudents from "./pages/instructor/CourseStudents";
+import CourseTA from "./pages/instructor/CourseTA";
+import UpdatePassword from "./pages/instructor/UpdatePassword";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -23,7 +32,7 @@ import CourseRegistration from "./pages/admin/CourseRegistration";
 
 const App = () => {
   return (
-    <div>
+    <>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -38,7 +47,6 @@ const App = () => {
         />
 
         <Route path="/instructor-login" element={<InstructorLogin />} />
-
         <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Protected Routes */}
@@ -61,10 +69,64 @@ const App = () => {
         />
 
         <Route
+          path="/student-courses-offer"
+          element={
+            <PrivateRoute>
+              <StudentCoursesOffer />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
           path="/student-change-password"
           element={
             <PrivateRoute>
               <StudentChangePassword />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/instructor-dashboard"
+          element={
+            <PrivateRoute>
+              <InstructorDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/instructor-courses"
+          element={
+            <PrivateRoute>
+              <InstructorCourses />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/instructor-courses/:courseCode/:sectionId/students"
+          element={
+            <PrivateRoute>
+              <CourseStudents />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/instructor-courses/:courseCode/:sectionId/tas"
+          element={
+            <PrivateRoute>
+              <CourseTA />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/instructor-change-password"
+          element={
+            <PrivateRoute>
+              <UpdatePassword />
             </PrivateRoute>
           }
         />
@@ -95,7 +157,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        
+
         <Route
           path="/admin-course-registration"
           element={
@@ -105,7 +167,10 @@ const App = () => {
           }
         />
       </Routes>
-    </div>
+
+      {/* ✅ Toast Notifications */}
+      <ToastContainer position="top-right" autoClose={3000} />
+    </>
   );
 };
 

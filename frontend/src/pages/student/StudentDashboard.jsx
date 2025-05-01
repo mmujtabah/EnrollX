@@ -73,7 +73,7 @@ const StudentDashboard = () => {
             className={`dashboard-card ${
               animate ? "dashboard-card-animated" : ""
             }`}
-            onClick={() => navigate("/student/courses-offered")}
+            onClick={() => navigate("/student-courses-offer")}
           >
             <h2>🧾 Courses Offered</h2>
             <p>Browse and enroll in available courses this semester.</p>
@@ -83,17 +83,7 @@ const StudentDashboard = () => {
             className={`dashboard-card ${
               animate ? "dashboard-card-animated" : ""
             }`}
-            onClick={() => navigate("/student/drop-course")}
-          >
-            <h2>❌ Drop Course</h2>
-            <p>Manage and drop your enrolled courses with ease.</p>
-          </div>
-
-          <div
-            className={`dashboard-card ${
-              animate ? "dashboard-card-animated" : ""
-            }`}
-            onClick={() => navigate("/student/change-password")}
+            onClick={() => navigate("/student-change-password")}
           >
             <h2>🔒 Change Password</h2>
             <p>Securely update your account password here.</p>
