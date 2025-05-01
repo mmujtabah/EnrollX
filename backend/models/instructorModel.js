@@ -1,76 +1,78 @@
+const { pool } = require("mssql");
 const { sql, poolPromise } = require("../config/db");
 
-// Get Registered Students for an Instructor's Course
-const getRegisteredStudents = async (instructorId, courseCode) => {
+const getInstructorbyID = async (instructorId) => {
   try {
     const pool = await poolPromise;
 
-    const students = await pool
+    const result = await pool
+      .request()
+      .input("id", sql.Char(9), instructorId)
+      .output("email", sql.VarChar(50))
+      .output("name", sql.VarChar(50))
+      .output("password", sql.VarChar(255))
+      .output("status", sql.Bit)
+      .execute("GET_INSTRUCTOR_DETAILS");
+
+    const { email, name, password, status } = result.output;
+
+    if (status) {
+      return { id: instructorId, email, name, password };
+    } else {
+      return { message: "❌ Instructor not found" };
+    }
+  } catch (error) {
+    console.error("❌ Error fetching instructor:", error);
+    return { message: "❌ Internal Server Error" };
+  }
+};
+
+
+const getRegisteredStudents = async (instructorId, courseCode, sectionId) => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool
       .request()
       .input("instructorId", sql.Char(9), instructorId)
       .input("courseCode", sql.VarChar(9), courseCode)
-      .query(
-        `SELECT cs.instructor_id, s.roll_no, s.name, cs.course_code, cs.section_id
-         FROM Course_Sections cs 
-         JOIN Enrollments e ON cs.section_id = e.section_id
-         JOIN Students s ON e.roll_no = s.roll_no
-         WHERE cs.instructor_id = @instructorId 
-         AND cs.course_code = @courseCode`
-      );
-
-    return students.recordset.length > 0
-      ? students.recordset
-      : { message: "❌ No students found or unauthorized access" };
+      .input("sectionId", sql.Char(1), sectionId)
+      .execute("GET_REGISTERED_STUDENTS");
+      return result.recordset;
   } catch (error) {
     console.error("❌ Error fetching students:", error);
     return { message: "❌ Internal Server Error" };
   }
 };
 
-// Get Teaching Assistants for an Instructor's Course
-const getTeachingAssistants = async (instructorId, courseCode) => {
+
+const getTeachingAssistants = async (instructorId, courseCode, sectionId) => {
   try {
     const pool = await poolPromise;
 
-    const tas = await pool
+    const result = await pool
       .request()
       .input("instructorId", sql.Char(9), instructorId)
       .input("courseCode", sql.VarChar(9), courseCode)
-      .query(
-        `SELECT i.id AS instructor_id, i.name AS instructor_name, 
-                ta.roll_no AS ta_roll_no, s.name AS ta_name, cs.course_code, cs.section_id
-         FROM Students s 
-         JOIN TA ta ON s.roll_no = ta.roll_no
-         JOIN Course_Section_TA cst ON ta.roll_no = cst.TA_roll_no
-         JOIN Course_Sections cs ON cs.section_id = cst.section_id
-         JOIN Instructors i ON i.id = cs.instructor_id
-         WHERE cs.instructor_id = @instructorId 
-         AND cs.course_code = @courseCode`
-      );
+      .input("sectionId", sql.Char(9), sectionId)
+      .execute("GET_TEACHER_ASSISTANTS");
 
-    return tas.recordset.length > 0
-      ? tas.recordset
-      : { message: "❌ No TAs found or unauthorized access" };
+    return result.recordset;
   } catch (error) {
-    console.error("❌ Error fetching TAs:", error);
+    console.error("❌ Error executing GET_TEACHER_ASSISTANTS:", error);
     return { message: "❌ Internal Server Error" };
   }
 };
 
-// Get Courses Taught by an Instructor (Across Multiple Sections)
-const getInstructorCourses = async (instructorId) => {
+
+const getCoursesByInstructorId = async (instructorId) => {
   try {
     const pool = await poolPromise;
 
     const courses = await pool
       .request()
       .input("instructorId", sql.Char(9), instructorId)
-      .query(
-        `SELECT DISTINCT cs.course_code, c.course_name, cs.section_id
-         FROM Course_Sections cs
-         JOIN Courses c ON cs.course_code = c.course_code
-         WHERE cs.instructor_id = @instructorId`
-      );
+      .execute("GET_COURSES_TEACHING");
 
     return courses.recordset.length > 0
       ? courses.recordset
@@ -81,8 +83,19 @@ const getInstructorCourses = async (instructorId) => {
   }
 };
 
+const updatePassword = async (id, newPassword) => {
+  const pool = await poolPromise;
+  await pool
+    .request()
+    .input("id", sql.Char(9), id)
+    .input("password", sql.VarChar(255), newPassword)
+    .query("UPDATE Instructors SET password = @password WHERE id = @id");
+};
+
 module.exports = {
+  getInstructorbyID,
   getRegisteredStudents,
   getTeachingAssistants,
-  getInstructorCourses,
+  getCoursesByInstructorId,
+  updatePassword
 };

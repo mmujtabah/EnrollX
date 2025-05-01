@@ -33,7 +33,7 @@ const Register = () => {
       );
 
       alert(res.data.message || "Registration successful!");
-      window.location.href = "/student-dashboard"; // ✅ Use correct route if applicable
+      window.location.href = "/student-login";
     } catch (err) {
       console.error("❌ Registration failed:", err);
       alert(err.response?.data?.message || "❌ Something went wrong!");
