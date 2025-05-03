@@ -1,49 +1,96 @@
-// admin-dashboard.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminDashboard.css";
-import { Link } from "react-router-dom"
+import Layout from "../components/Layout.jsx";
+import { useNavigate, Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
+const getCookie = (name) => {
+  const cookieArray = document.cookie.split("; ");
+  for (let i = 0; i < cookieArray.length; i++) {
+    const cookie = cookieArray[i].split("=");
+    if (cookie[0] === name) return cookie[1];
+  }
+  return null;
+};
 
-export default function AdminDashboard() {
+const AdminDashboard = () => {
+  const [animate, setAnimate] = useState(false);
+  const [adminName, setAdminName] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = getCookie("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setAdminName(decoded.name || "Admin");
+      } catch (error) {
+        console.error("Token decode failed:", error);
+      }
+    }
+
+    const timeout = setTimeout(() => setAnimate(true), 50);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:5000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      navigate("/admin-login");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
   return (
-    <div className="dashboard">
-      <nav className="navbar">
-        <h2>Admin Dashboard</h2>
-        <div className="nav-links">
-          <a href="#overview" className="nav-btn">Overview</a>
-          <a href="#users" className="nav-btn">Users</a>
-          <a href="#reports" className="nav-btn">Reports</a>
-          <a href="#settings" className="nav-btn">Settings</a>
-        </div>
-      </nav>
+    <Layout>
+      <div className="admin-dashboard">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome, {adminName || "Admin"}! Manage the platform efficiently.</p>
 
-      <section className="admin-hero">
-        <div className="admin-cards">
-          <div className="admin-card users">
-            <Link to="/admin-update-student" className="studentupdate">
-            <h3>Update Student/s Data</h3>
-            </Link>
-            <p></p>
-          </div>
-          <div className="admin-card reports">
-            <Link to="/admin-update-instructors" className="instructorupdate">
-            <h3>Update Instructor/s Data</h3>
-            </Link>
-            <p></p>
-          </div>
-          <div className="admin-card active">
-            <Link to="/admin-course-registration" className="courseregistration">
-            <h3>Start Course Registration</h3>
-            </Link>
-            <p></p>
-          </div>
+        <div className="dashboard-cards">
+          <Link
+            to="/update-student"
+            className={`dashboard-card ${animate ? "dashboard-card-animated animate-delay-1" : ""}`}
+          >
+            <h2>🎓 Update Student</h2>
+            <p>Modify student details and manage enrollment.</p>
+          </Link>
+
+          <Link
+            to="/update-instructor"
+            className={`dashboard-card ${animate ? "dashboard-card-animated animate-delay-2" : ""}`}
+          >
+            <h2>🧑‍🏫 Update Teacher</h2>
+            <p>Edit instructor profiles and permissions.</p>
+          </Link>
+
+          <Link
+            to="/add-course"
+            className={`dashboard-card ${animate ? "dashboard-card-animated animate-delay-3" : ""}`}
+          >
+            <h2>📚 Add Course</h2>
+            <p>Introduce new courses to the system.</p>
+          </Link>
+
+          <Link
+            to="/registration"
+            className={`dashboard-card ${animate ? "dashboard-card-animated animate-delay-4" : ""}`}
+          >
+            <h2>📝 Start Registration</h2>
+            <p>Open registration for upcoming semesters.</p>
+          </Link>
         </div>
 
-        <div className="admin-content">
-          <h1>Welcome, Admin</h1>
-          <p>Manage Students, Instructors and Courses, all in one place.</p>
-        </div>
-      </section>
-    </div>
+        <button className="logout-button" onClick={handleLogout}>
+          🚪 Logout
+        </button>
+      </div>
+    </Layout>
   );
-}
+};
+
+export default AdminDashboard;

@@ -298,6 +298,32 @@ BEGIN
 END
 
 GO
+CREATE PROCEDURE START_REGISTRATION
+AS
+BEGIN
+    DECLARE @period_id CHAR(9)
+    SET @period_id = FORMAT(GETDATE(), 'yyyyMMdd') + RIGHT('0' + CAST(DATEPART(HOUR, GETDATE()) AS VARCHAR), 2)
+
+    INSERT INTO Registration_Period (period_id, start_datetime, end_datetime, is_active)
+    VALUES (
+        @period_id,
+        GETDATE(),
+        DATEADD(DAY, 10, GETDATE()),
+        1
+    )
+END
+
+GO
+CREATE PROCEDURE STOP_REGISTRATION
+AS
+BEGIN
+    UPDATE Registration_Period
+    SET is_active = 0
+    WHERE is_active = 1
+END
+
+
+GO
 CREATE PROCEDURE GET_REGISTERED_STUDENTS
     @instructorId CHAR(9),
     @courseCode VARCHAR(9),
@@ -335,7 +361,7 @@ BEGIN
     JOIN Course_Section_TA cst 
         ON ta.roll_no = cst.TA_roll_no 
         AND cst.course_code = @courseCode
-        AND cst.section_id = @sectionId  -- Directly use course and section
+        AND cst.section_id = @sectionId 
     JOIN Course_Sections cs 
         ON cs.section_id = cst.section_id 
         AND cs.course_code = cst.course_code
@@ -390,12 +416,11 @@ END
 GO
 CREATE PROCEDURE UPDATE_INSTRUCTOR
     @id CHAR(9),
-    @email VARCHAR(50), 
     @name VARCHAR(50)
 AS
 BEGIN
     UPDATE Instructors 
-    SET email = @email, name = @name 
+    SET name = @name 
     WHERE id = @id
 END
 

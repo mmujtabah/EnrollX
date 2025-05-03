@@ -1,114 +1,82 @@
-// update-student.js
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Layout from "../components/Layout";
 import "./UpdateStudent.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-export default function UpdateStudent() {
-  const [studentId, setStudentId] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [student, setStudent] = useState({
+const UpdateStudent = () => {
+  const [formData, setFormData] = useState({
+    rollNo: "",
     name: "",
-    email: "",
-    department: "",
-    year: "",
   });
-
   const navigate = useNavigate();
 
-  const handleIdSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulated check for valid student IDs
-    const validIds = ["101", "202", "303"];
-    if (validIds.includes(studentId)) {
-      setShowForm(true);
-    } else {
-      alert("Student Roll Number not found. Redirecting to dashboard.");
-      navigate("/admin-dashboard");
+    if (!formData.rollNo || !formData.name) {
+      toast.warning("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/admins/update-student`,
+        formData,
+        { withCredentials: true }
+      );
+      toast.success(res.data.message);
+      setFormData({ rollNo: "", name: "" });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Failed to update student."
+      );
     }
   };
 
-  const handleChange = (e) => {
-    setStudent({ ...student, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Updated student info:", student);
-    // API call can be added here
-  };
-
   return (
-    <div className="update-container">
-      {!showForm ? (
-        <form className="update-form" onSubmit={handleIdSubmit}>
-          <h1 className="form-title">Enter Roll Number</h1>
-          <input
-            type="text"
-            name="studentId"
-            placeholder="Roll Number"
-            value={studentId}
-            onChange={(e) => setStudentId(e.target.value)}
-            required
-          />
-          <button type="submit" className="btn update-btn">Verify Roll Number</button>
-        </form>
-      ) : (
-        <>
-          <h1 className="form-title">Update Student Information</h1>
-          <form className="update-form" onSubmit={handleSubmit}>
-            <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={student.name}
-                onChange={handleChange}
-                required
-              />
-            </label>
+    <Layout>
+      <div className="update-student-container">
+        <div className="update-student-box">
+          <h2>Update Student Info</h2>
+          <form onSubmit={handleSubmit} className="update-student-form">
+            <input
+              type="text"
+              name="rollNo"
+              placeholder="Roll Number (e.g. 21K-1234)"
+              value={formData.rollNo}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="name"
+              placeholder="Student Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <button type="submit" className="update-button">
+  Update
+</button>
+<button
+  type="button"
+  className="back-button-admin"
+  onClick={() => navigate("/admin-dashboard")}
+>
+Back
+</button>
 
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={student.email}
-                onChange={handleChange}
-                required
-              />
-            </label>
-
-            <label>
-              Department:
-              <input
-                type="text"
-                name="department"
-                value={student.department}
-                onChange={handleChange}
-                required
-              />
-            </label>
-
-            <label>
-              Year:
-              <select
-                name="year"
-                value={student.year}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Year</option>
-                <option value="1">1st Year</option>
-                <option value="2">2nd Year</option>
-                <option value="3">3rd Year</option>
-                <option value="4">4th Year</option>
-              </select>
-            </label>
-
-            <button type="submit" className="btn update-btn">Update</button>
           </form>
-        </>
-      )}
-    </div>
+        </div>
+      </div>
+    </Layout>
   );
-}
+};
+
+export default UpdateStudent;
