@@ -8,7 +8,7 @@ const About = () => {
       <div className="about-container">
         <div className="about-header">
           <h1>About EnrollX</h1>
-          <p className="tagline">Smarter, Faster, Simpler Course Registration</p>
+          <p className="tagline">Smarter, Faster, Simpler Course Registration System</p>
         </div>
 
         <div className="about-description">
