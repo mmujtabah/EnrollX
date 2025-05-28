@@ -28,7 +28,8 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UpdateStudent from "./pages/admin/UpdateStudent";
 import UpdateInstructors from "./pages/admin/UpdateInstructors";
-import CourseRegistration from "./pages/admin/CourseRegistration";
+import AddCourse from "./pages/admin/AddCourse"
+import Registration from "./pages/admin/Registration";
 
 const App = () => {
   return (
@@ -141,7 +142,7 @@ const App = () => {
         />
 
         <Route
-          path="/admin-update-student"
+          path="/update-student"
           element={
             <PrivateRoute>
               <UpdateStudent />
@@ -150,7 +151,7 @@ const App = () => {
         />
 
         <Route
-          path="/admin-update-instructors"
+          path="/update-instructor"
           element={
             <PrivateRoute>
               <UpdateInstructors />
@@ -159,16 +160,28 @@ const App = () => {
         />
 
         <Route
-          path="/admin-course-registration"
+          path="/add-course"
           element={
             <PrivateRoute>
-              <CourseRegistration />
+              <AddCourse />
             </PrivateRoute>
           }
         />
-      </Routes>
 
-      {/* ✅ Toast Notifications */}
+
+<Route
+          path="/registration"
+          element={
+            <PrivateRoute>
+              <Registration />
+            </PrivateRoute>
+          }
+        />
+
+      </Routes>
+      
+
+      {/* Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
     </>
   );

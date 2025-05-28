@@ -12,7 +12,6 @@ const Navbar = () => {
       <nav className="nav-links">
         <Link to="/" className="nav-btn">Home</Link>
         <Link to="/about" className="nav-btn">About</Link>
-        <Link to="/contact" className="nav-btn">Contact</Link>
       </nav>
     </header>
   );

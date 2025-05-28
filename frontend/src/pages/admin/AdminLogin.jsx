@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./AdminLogin.css";
 import Layout from "../components/Layout.jsx";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const Login = () => {
+const AdminLogin = () => {
   const [formData, setFormData] = useState({
-    rollNo: "",
+    adminId: "",
     password: "",
   });
 
@@ -17,19 +19,18 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/students/login`,
-        formData
+        `${import.meta.env.VITE_API_URL}/api/admins/login`,
+        formData,
+        { withCredentials: true }
       );
 
-      // Store token for session management
-      localStorage.setItem("token", res.data.token);
-      alert(res.data.message);
-
-      // Optional: Redirect to a dashboard or home page after login
-      window.location.href = "/admin-dashboard"; 
+      toast.success(res.data.message || "Login successful!");
+      setTimeout(() => {
+        window.location.href = "/admin-dashboard";
+      }, 1500); // Allow toast to show
     } catch (err) {
       console.error("Login failed", err);
-      alert("Error: " + (err.response?.data?.error || "Invalid credentials."));
+      toast.error(err.response?.data?.message || "Invalid credentials.");
     }
   };
 
@@ -42,7 +43,7 @@ const Login = () => {
             <div className="input-group">
               <input
                 type="text"
-                name="rollNo"
+                name="adminId"
                 placeholder="Enter Admin ID"
                 onChange={handleChange}
                 required
@@ -60,12 +61,13 @@ const Login = () => {
             <button type="submit" className="login-btn">Login</button>
           </form>
           <div className="forgot-password">
-            <a href="/student-forgot-password">Forgot Password?</a>
+            <a href="/admin-forgot-password">Forgot Password?</a>
           </div>
         </div>
+        <ToastContainer position="top-right" autoClose={2000} />
       </div>
     </Layout>
   );
 };
 
-export default Login;
+export default AdminLogin;

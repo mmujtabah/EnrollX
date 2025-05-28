@@ -1,78 +1,111 @@
-/* update-instructor.css */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-body {
-  background: #0f172a;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px 20px;
-}
-
-.update-container {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
-  max-width: 500px;
-  width: 100%;
-  backdrop-filter: blur(10px);
-}
-
-.form-title {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 2rem;
-  color: #FFD700;
-}
-
-.update-form label {
-  display: block;
-  margin-bottom: 20px;
-  color: #eee;
-}
-
-.update-form input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  margin-top: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 1rem;
-  outline: none;
-}
-
-.update-form input::placeholder {
-  color: #ccc;
-}
-
-.update-btn {
-  background: linear-gradient(135deg, #f39c12, #e67e22);
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 600;
-  padding: 12px;
-  border: none;
+.update-instructor-container {
+  max-width: 600px;
+  margin: 120px auto 40px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  color: #fff;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.update-instructor-box h2 {
+  font-size: 2rem;
+  color: yellow;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.update-instructor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.update-instructor-form input {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  outline: none;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease;
+}
+
+.update-instructor-form input::placeholder {
+  color: #cccccc;
+}
+
+.update-instructor-form input:focus {
+  border-color: #00ffc3;
+}
+
+/* Update Button */
+.update-btn {
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff; /* Light Blue */
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-top: 10px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 10px #007bff !important; /* green glow */
+
 }
 
 .update-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
-  opacity: 0.9;
+  background-color: #0096cc;
+}
+
+/* Back Button */
+.back-btn {
+  margin-top: 14px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #28a745; /* Green */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 10px #00cc66 !important; /* green glow */
+}
+
+.back-btn:hover {
+  background-color: #218838;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .update-instructor-container {
+    margin-top: 80px;
+    padding: 20px;
+  }
+
+  .update-instructor-box h2 {
+    font-size: 1.6rem;
+  }
+
+  .update-instructor-form input,
+  .update-instructor-form button {
+    font-size: 0.95rem;
+  }
 }
