@@ -90,7 +90,3 @@ JWT_SECRET=your-secret-key
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-## Support
-
-For any issues or questions, please open an issue on the [GitHub repository](https://github.com/mmujtabah/EnrollX/issues).
